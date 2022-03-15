@@ -1,1 +1,5 @@
 안녕하세요
+
+public void plus(a,b) {
+	return a+b;
+}
