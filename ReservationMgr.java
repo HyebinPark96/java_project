@@ -8,6 +8,7 @@ import java.util.Date;
 public class ReservationMgr {
 	
 	int r_capacity;
+	int p_cost;
 
 	// 매번 정보 가져오는 과부하 안걸리게 pool에 만든 인스턴스를 담기
 	private DBConnectionMgr pool;
@@ -54,7 +55,7 @@ public class ReservationMgr {
 	
 	
 	// (테스트)INSERT : 날짜 넣기
-	public boolean testInsertDate(int room, java.sql.Date startDate, java.sql.Date endDate) {
+	public boolean testInsertDate(int room, java.sql.Date startDate, java.sql.Date endDate, int headcount, String r_status, int p_cost) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		String sql;
@@ -62,12 +63,16 @@ public class ReservationMgr {
 
 		try {
 			con = pool.getConnection();
-			sql = "INSERT reservation (r_room, startdate, enddate) " + "VALUES (?, ?, DATE_ADD(?, INTERVAL 1 DAY))";
+			sql = "INSERT reservation (r_room, startdate, enddate, headcount, r_status, p_cost ) " 
+			+ "VALUES (?, ?, DATE_ADD(?, INTERVAL 1 DAY), ?, ?, ?)";
 			pstmt = con.prepareStatement(sql);
 
 			pstmt.setInt(1, room);
 			pstmt.setDate(2, startDate);
 			pstmt.setDate(3, endDate);
+			pstmt.setInt(4, headcount);
+			pstmt.setString(5, r_status);
+			pstmt.setInt(6, p_cost);
 
 			// executeUpdate : insert, update, delete 실행문
 			int aaa = pstmt.executeUpdate();
@@ -161,7 +166,7 @@ public class ReservationMgr {
 	
 
 		// 룸별 최대수용인원과 예약인원 체크
-		public boolean capacityChk(int room) {
+		public boolean capacityAndCostChk(int room) {
 			Connection con = null;
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
@@ -172,7 +177,7 @@ public class ReservationMgr {
 				con = pool.getConnection();
 
 				// 쿼리문
-				sql = "SELECT r_capacity " 
+				sql = "SELECT p_cost, r_capacity " 
 				+ "FROM room " 
 				+ "WHERE r_room = ?";
 
@@ -185,7 +190,9 @@ public class ReservationMgr {
 
 				if (rs.next())
 					flagForCapaChk = true; // 값이 있다면 true 반환 -> 중복된 일정이 있다.
-					r_capacity = rs.getInt(1); // 룸별 최대수용인원 들고와서 int형 r_capacity에 넣기
+					p_cost = rs.getInt(1); // 룸별 1박당 가격 들고와서 int형 p_cost에 넣기
+					r_capacity = rs.getInt(2); // 룸별 최대수용인원 들고와서 int형 r_capacity에 넣기
+					
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -193,20 +200,8 @@ public class ReservationMgr {
 			}
 			return flagForCapaChk;
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
+			
 		
 		
 		

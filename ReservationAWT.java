@@ -105,6 +105,8 @@ public class ReservationAWT implements ActionListener {
 	int rsEDate; // DB와 연동될 종료날짜 최종값 (YYYYMMDD)
 	int rsRoom; // DB와 연동될 선택룸 최종값 (101, 102, 201, 202 중 하나)
 	int headcount; // DB와 연동될 예약인원
+	String r_status;
+	int p_cost;
 	
 	ReservationMgr rsMgr = new ReservationMgr();
 	
@@ -190,7 +192,17 @@ public class ReservationAWT implements ActionListener {
 		// panel5의 Grid 마지막 행에 panel14 1행 2열 그리드를 만든다.
 		panel14.setLayout(new GridLayout(1,2)); 
 		panel14.add(panel15); // 텍스트필드 들어갈 1열
+		
+		
+		
+		///////////////////////////////////////////테스트
 		rsHeadcountTf.setText(1+"");
+		headcount = Integer.parseInt(rsHeadcountTf.getText());
+		///////////////////////////////////////////테스트
+		
+		
+		
+		
 		panel15.add(rsHeadcountTf); 
 	
 		panel14.add(panel16); // 오르내림 버튼 들어갈 2열
@@ -333,7 +345,8 @@ public class ReservationAWT implements ActionListener {
 		rsRoomTf.setText(roomBtn[0].getText());
 		
 		
-		
+		// 새로고침
+		jf.validate();
 		
 		/////////////////////////////////////////////
 	} // ---- 생성자
@@ -468,7 +481,7 @@ public class ReservationAWT implements ActionListener {
 		/////////////////////////////////////
 		// 예약인원 기본값은 1로
 		if(e.getSource() == cPlusBtn)  {
-			System.out.println("");
+			System.out.println("인원 수 증가버튼 클릭");
 			
 			// 1. rsHeadcountTf로부터 예약인원 가져오기
 			headcount = Integer.parseInt(rsHeadcountTf.getText());
@@ -481,7 +494,9 @@ public class ReservationAWT implements ActionListener {
 			int rsRoom = (Integer.parseInt(rsRoomTf.getText().replaceAll("호", "")));
 			
 			// 4. DB연동해서 선택룸의 최대 수용인원 가져오기 (SEELCT r_capacity)
-			rsMgr.capacityChk(rsRoom);
+			rsMgr.capacityAndCostChk(rsRoom);
+			
+			
 			
 					
 			// 5. headcount(+1 증가된 인원)과 rsMgr.r_capacity(DB상 룸별 최대 수용인원) 비교
@@ -499,6 +514,9 @@ public class ReservationAWT implements ActionListener {
 			
 			
 		} else if(e.getSource() == cMinusBtn) { // 예약인원 < 최저 수용인원 (1)
+			
+			System.out.println("인원 수 감소버튼 클릭");
+			
 			// 1. rsHeadcountTf로부터 예약인원 가져오기
 			headcount = Integer.parseInt(rsHeadcountTf.getText());
 			
@@ -599,20 +617,23 @@ public class ReservationAWT implements ActionListener {
 		
 					} else {
 						// DB와 중복되지 않는 날짜 선택했다면 false 반환
+						
+						// 결제 전 단계인 예약파트에서 결제하기 버튼 누르면 결제 전 상태 셋팅됨
+						r_status = "결제 전";
+						
+						// 위아래버튼 눌렀을 때만 Mgr클래스로부터 1박당 가격을 넘겨받는다.
+						// 그러니 위아래버튼 안누르고 1박당 가격 넘겨받으려면 다시 체크메소드 불러오기
+						rsMgr.capacityAndCostChk(rsRoom); // 어차피 룸인원은 위아래 버튼 안눌렀으면 1로 셋팅되어이써서 모든 룸 최대수용인원 조건에 부합한다.
+						
+						// 위아래버튼 안누르면 headcount = 1; 기본셋팅 되어있다.
+						// p_cost만 셋팅하면 된다.
+						p_cost = rsMgr.p_cost;
+						System.out.println(p_cost);
+						
 						// DB INSERT 
-						rsMgr.testInsertDate(rsRoom, sqlDate, sqlDate);
+						rsMgr.testInsertDate(rsRoom, sqlDate, sqlDate, headcount, r_status, p_cost);
 						
-						
-						// 부분컬럼 INSERT 완료 후 나머지 컬럼 INSERT 하기
-						// capacity, r_status, p_cost
-						
-						
-						
-						
-						
-						
-						
-						
+
 						
 						
 						
@@ -628,12 +649,6 @@ public class ReservationAWT implements ActionListener {
 						} catch (Exception e2) {
 							e2.printStackTrace();
 						}
-						
-						
-						
-						
-						
-						
 						
 						
 						System.out.println("중복되는 일정없이 무사히 예약되셨습니다.");
