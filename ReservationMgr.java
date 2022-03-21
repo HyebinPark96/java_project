@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.util.Date;
 
 public class ReservationMgr {
+	
+	int r_capacity;
 
 	// 매번 정보 가져오는 과부하 안걸리게 pool에 만든 인스턴스를 담기
 	private DBConnectionMgr pool;
@@ -158,5 +160,54 @@ public class ReservationMgr {
 		} // --- (테스트) 날짜 넣기
 	
 
-	
+		// 룸별 최대수용인원과 예약인원 체크
+		public boolean capacityChk(int room) {
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String sql;
+			boolean flagForCapaChk = false;
+
+			try {
+				con = pool.getConnection();
+
+				// 쿼리문
+				sql = "SELECT r_capacity " 
+				+ "FROM room " 
+				+ "WHERE r_room = ?";
+
+				pstmt = con.prepareStatement(sql);
+
+				pstmt.setInt(1, room); // 1은 첫번째 ?를 의미
+
+				// executeQuery : select 실행문
+				rs = pstmt.executeQuery();
+
+				if (rs.next())
+					flagForCapaChk = true; // 값이 있다면 true 반환 -> 중복된 일정이 있다.
+					r_capacity = rs.getInt(1); // 룸별 최대수용인원 들고와서 int형 r_capacity에 넣기
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				pool.freeConnection(con, pstmt, rs);
+			}
+			return flagForCapaChk;
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 }

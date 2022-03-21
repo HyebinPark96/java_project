@@ -40,8 +40,8 @@ public class ReservationAWT implements ActionListener {
 	JLabel rsSDateLb = new JLabel("시작 일정 : ");
 	JLabel rsEDateLb = new JLabel("종료 일정 : ");
 	
-	JLabel rsCapacityLb = new JLabel("예약 인원 : ");
-	JTextField rsCapacityTf = new JTextField(10);
+	JLabel rsHeadcountLb = new JLabel("예약 인원 : ");
+	JTextField rsHeadcountTf = new JTextField(10);
 	
 	JButton paymentBtn = new JButton("결제하기");
 	JTextField rsRoomTf = new JTextField(10);
@@ -104,6 +104,7 @@ public class ReservationAWT implements ActionListener {
 	int rsSDate; // DB와 연동될 시작날짜 최종값 (YYYYMMDD)
 	int rsEDate; // DB와 연동될 종료날짜 최종값 (YYYYMMDD)
 	int rsRoom; // DB와 연동될 선택룸 최종값 (101, 102, 201, 202 중 하나)
+	int headcount; // DB와 연동될 예약인원
 	
 	ReservationMgr rsMgr = new ReservationMgr();
 	
@@ -182,14 +183,15 @@ public class ReservationAWT implements ActionListener {
 		// 직접 텍스트필드에 적는 거 말고, 오름내림 버튼 만들어서 
 		// 오름버튼 내림버튼에 액션리스너 달아서 각 호수선택된거에 따라 조건문 적기
 		// 인원 텍스트필드 
-		rsCapacityLb.setFont(new Font("맑은 고딕", Font.BOLD, 20));
-		panel5.add(rsCapacityLb);
+		rsHeadcountLb.setFont(new Font("맑은 고딕", Font.BOLD, 20));
+		panel5.add(rsHeadcountLb);
 		panel5.add(panel14); // 마지막 행에 panel14 추가 
 		
 		// panel5의 Grid 마지막 행에 panel14 1행 2열 그리드를 만든다.
 		panel14.setLayout(new GridLayout(1,2)); 
 		panel14.add(panel15); // 텍스트필드 들어갈 1열
-		panel15.add(rsCapacityTf); 
+		rsHeadcountTf.setText(1+"");
+		panel15.add(rsHeadcountTf); 
 	
 		panel14.add(panel16); // 오르내림 버튼 들어갈 2열
 		
@@ -197,6 +199,9 @@ public class ReservationAWT implements ActionListener {
 		
 		panel17.add(cPlusBtn); // 오름 버튼
 		panel18.add(cMinusBtn); // 내림 버튼
+		
+		cPlusBtn.addActionListener(this);
+		cMinusBtn.addActionListener(this);
 		
 		panel16.add("North",panel17);
 		panel16.add("South",panel18);
@@ -326,6 +331,10 @@ public class ReservationAWT implements ActionListener {
 
 		
 		rsRoomTf.setText(roomBtn[0].getText());
+		
+		
+		
+		
 		/////////////////////////////////////////////
 	} // ---- 생성자
 	
@@ -455,6 +464,64 @@ public class ReservationAWT implements ActionListener {
 				}
 			}
 		}
+		
+		/////////////////////////////////////
+		// 예약인원 기본값은 1로
+		if(e.getSource() == cPlusBtn)  {
+			System.out.println("");
+			
+			// 1. rsHeadcountTf로부터 예약인원 가져오기
+			headcount = Integer.parseInt(rsHeadcountTf.getText());
+			
+			// 2. headcount, Tf +1씩 증가시키기
+			headcount++;
+			rsHeadcountTf.setText(headcount+"");
+			
+			// 3. 선택룸 들고오기
+			int rsRoom = (Integer.parseInt(rsRoomTf.getText().replaceAll("호", "")));
+			
+			// 4. DB연동해서 선택룸의 최대 수용인원 가져오기 (SEELCT r_capacity)
+			rsMgr.capacityChk(rsRoom);
+			
+					
+			// 5. headcount(+1 증가된 인원)과 rsMgr.r_capacity(DB상 룸별 최대 수용인원) 비교
+			if(headcount>rsMgr.r_capacity) { // 예약인원 > 최대 수용인원 
+				// 경고 알림창
+				JOptionPane.showMessageDialog(null, rsRoom + "호의 최대 수용인원은 " + 
+				rsMgr.r_capacity + "명 입니다.", "예약인원을 체크해주세요.", 
+				JOptionPane.ERROR_MESSAGE);
+				
+				// 다시 1로 셋팅
+				headcount = 1;
+				rsHeadcountTf.setText(headcount+"");
+			}
+			
+			
+			
+		} else if(e.getSource() == cMinusBtn) { // 예약인원 < 최저 수용인원 (1)
+			// 1. rsHeadcountTf로부터 예약인원 가져오기
+			headcount = Integer.parseInt(rsHeadcountTf.getText());
+			
+			// 2. headcount, Tf +1씩 증가시키기
+			headcount--;
+			rsHeadcountTf.setText(headcount+"");
+
+			if(headcount < 1) {
+				// 경고 알림창
+				JOptionPane.showMessageDialog(null, "1명 이상의 인원만 예약 가능압니다.", "예약인원을 체크해주세요.", JOptionPane.ERROR_MESSAGE);
+
+				// 다시 1로 셋팅
+				headcount = 1;
+				rsHeadcountTf.setText(headcount+"");
+			}
+		}
+		
+		
+		
+		
+		/////////////////////////////////////
+		
+		
 
 		
 		/////////////////////////////////////////////
@@ -535,6 +602,20 @@ public class ReservationAWT implements ActionListener {
 						// DB INSERT 
 						rsMgr.testInsertDate(rsRoom, sqlDate, sqlDate);
 						
+						
+						// 부분컬럼 INSERT 완료 후 나머지 컬럼 INSERT 하기
+						// capacity, r_status, p_cost
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
 						// INSERT 완료 후 sqlDate 1일씩 증가시켜서 예약 마지막날까지 반복문 돌게 한다.
 						cal.add(Calendar.DATE, 1); // 1일 증가 시키기
 						
@@ -547,6 +628,13 @@ public class ReservationAWT implements ActionListener {
 						} catch (Exception e2) {
 							e2.printStackTrace();
 						}
+						
+						
+						
+						
+						
+						
+						
 						
 						System.out.println("중복되는 일정없이 무사히 예약되셨습니다.");
 					}
