@@ -94,7 +94,7 @@ public class Guide {
 		JButton rb101 = new JButton("101ȣ");
 		rb101.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new Room101();
+				new Room101(userId);
 				frame.dispose();
 			}
 		});
@@ -107,7 +107,7 @@ public class Guide {
 		JButton rb102 = new JButton("102ȣ");
 		rb102.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new Room102();
+				new Room102(userId);
 				frame.dispose();
 			}
 		});
@@ -121,7 +121,7 @@ public class Guide {
 		JButton rb201 = new JButton("201ȣ");
 		rb201.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new Room201();
+				new Room201(userId);
 				frame.dispose();
 			}
 		});
@@ -135,7 +135,7 @@ public class Guide {
 		JButton rb202 = new JButton("202ȣ");
 		rb202.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new Room202();
+				new Room202(userId);
 				frame.dispose();
 			}
 		});

@@ -41,13 +41,13 @@ public class Room101 {
 
 	//생성자
 	public Room101() {
-		initialize();
+		this(null);
 
 	}
+	
+	//생성자
+	public Room101(String userId) {
 
-	//메인 프레임
-	private void initialize() {
-		
 		frame = new JFrame();
 		frame.getContentPane().setBackground(Color.WHITE);
 		frame.setBounds(100, 100, 1200, 800);
@@ -122,7 +122,7 @@ public class Room101 {
 		JButton backbtn = new JButton("<Back");
 		backbtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new Guide();
+				new Guide(userId);
 				frame.dispose();
 			}
 		});
@@ -132,5 +132,5 @@ public class Room101 {
 		backbtn.setBounds(12, 730, 67, 23);
 		frame.getContentPane().add(backbtn);
 	}
-}
 
+	}
