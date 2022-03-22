@@ -21,49 +21,48 @@ import java.awt.event.ItemListener;
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-// Frame 상속, ActionListener 이벤트 인터페이스
-public class PaymentFrame implements ActionListener, ItemListener {
-	// 필드 선언
-	Panel p1, p2, p3, p4;
-	Checkbox agmCb[]; // 약관 동의 체크박스들 배열원소로 담기
-
-	Label title; // 결제하기
-	Label agmTitle = new Label("이용약관"); // 이용약관
-	Label agmLb[]; // 약관 동의 문장 배열원소로 담기
-
-	Label cardNameLb = new Label("결제수단");
-	String cardName[] = { "삼성", "비씨", "하나", "카카오뱅크", "KB국민", "우리", "신한", "NH채움" };
-	JRadioButton cardBtn[]; // 카드사 선택 버튼
-	ButtonGroup cdBtg; // 버튼 그룹
-
-	Label p_costLb; // 결제금액
-	JTextField p_costTf; // 전체 결제금액 텍스트필드
-	Label krwLb = new Label("원");
-
-	Button p_btn; // 결제 버튼
-
-	CardPaymentFrame cpf;
-
-	int check;
-
-	// 생성자 생성
+public class PaymentFrame {
+	private JFrame jf; 
+	private int check;
+	private int totalCost;
+	
+	// 생성자
 	public PaymentFrame() {
-		JFrame jf = new JFrame("결제하기");
+		this(null);
+	}
+	
+	// 생성자
+	public PaymentFrame(String userId) {
+		Panel p1, p2, p3, p4;
+		Checkbox agmCb[]; // 약관 동의 체크박스들 배열원소로 담기
 
+		Label title; // 결제하기
+		Label agmTitle = new Label("이용약관"); // 이용약관
+		Label agmLb[]; // 약관 동의 문장 배열원소로 담기
+
+		Label cardNameLb = new Label("결제수단");
+		String cardName[] = { "삼성", "비씨", "하나", "카카오뱅크", "KB국민", "우리", "신한", "NH채움" };
+		JRadioButton cardBtn[]; // 카드사 선택 버튼
+		ButtonGroup cdBtg; // 버튼 그룹
+
+		Label p_costLb; // 결제금액
+		JTextField p_costTf; // 전체 결제금액 텍스트필드
+		Label krwLb = new Label("원");
+
+		Button p_btn; // 결제 버튼
+
+		jf = new JFrame("결제하기");
+		
 		Color c = new Color(255, 255, 255);
-
 		Container con = jf.getContentPane();
-
 		con.setBackground(c);
-
+		
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		jf.setSize(300, 300);
-
-		jf.setVisible(true);
 
 		// 레이아웃 지정 : null값
 		jf.setLayout(null);
@@ -82,9 +81,21 @@ public class PaymentFrame implements ActionListener, ItemListener {
 		agmCb[0] = new Checkbox("동의");
 		agmCb[1] = new Checkbox("동의");
 		agmCb[2] = new Checkbox("동의");
-
+		
+		
 		for (int i = 0; i < agmCb.length; i++) {
-			agmCb[i].addItemListener(this);
+			agmCb[i].addItemListener(new ItemListener() {
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					if (e.getStateChange() == ItemEvent.SELECTED) {
+						check++; // private 변수로 변경해서 상단에 올리니 해결
+						System.out.println(check);
+					} else if (e.getStateChange() == ItemEvent.DESELECTED) {
+						check--;
+						System.out.println(check);
+					}
+				}
+			});
 		}
 
 		title.setBounds(280, 30, 50, 50);
@@ -141,6 +152,10 @@ public class PaymentFrame implements ActionListener, ItemListener {
 
 		p_costLb = new Label("결제금액");
 		p_costTf = new JTextField(10);
+		
+		PaymentMgr mgr = new PaymentMgr();
+		totalCost = mgr.totalCostChk(userId);
+		p_costTf.setText(totalCost+"");
 
 		p_costLb.setBounds(280, 270, 50, 30);
 		jf.add(p_costLb);
@@ -153,7 +168,23 @@ public class PaymentFrame implements ActionListener, ItemListener {
 		jf.add(krwLb);
 
 		p_btn = new Button("결제");
-		p_btn.addActionListener(this);
+		p_btn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(check);
+				// 약관 모두 동의 + 결제수단 1개 선택(디폴트로 1개 지정되어 있음) 
+				// + 결제금액 텍스트필드 공백 아닐때 결제창이 뜨는 이벤트
+				if (check == 3 && p_costTf.getText().trim().length() > 0) {
+					// 카드결제창으로 넘어감
+					CardPaymentFrame cpf = new CardPaymentFrame(userId);
+					jf.dispose();
+				} else {
+					// 입력 조건 미부합
+					JOptionPane.showMessageDialog(null, "모든 약관에 동의해주세요.", "ERROR", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		
 		p_btn.setBounds(270, 350, 80, 20);
 		p_btn.setBackground(Color.BLACK);
 		p_btn.setForeground(Color.WHITE);
@@ -165,34 +196,8 @@ public class PaymentFrame implements ActionListener, ItemListener {
 
 		// 새로고침
 		jf.validate();
-
 	}
 
-	@Override
-	public void itemStateChanged(ItemEvent e) {
-
-		if (e.getStateChange() == ItemEvent.SELECTED) {
-			check++;
-		} else if (e.getStateChange() == ItemEvent.DESELECTED) {
-			check--;
-		}
-		// System.out.println(check);
-	}
-
-	// 액션리스너 이벤트 오버라이딩
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// 결제버튼 눌렀을 때
-		if (e.getSource() == p_btn) {
-			/*
-			 * 약관 모두 동의 AND 결제수단 1개 선택 AND 결제금액 텍스트필드 공백 아닐때 결제창이 뜨는 이벤트
-			 */
-			if (check == 3 && p_costTf.getText().trim().length() > 0) {
-				cpf = new CardPaymentFrame();
-			}
-
-		}
-	}
 
 	public static void main(String[] args) {
 		// 생성자 호출

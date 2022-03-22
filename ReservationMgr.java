@@ -55,7 +55,7 @@ public class ReservationMgr {
 	
 	
 	// (테스트)INSERT : 날짜 넣기
-	public boolean InsertDate(int room, java.sql.Date startDate, java.sql.Date endDate, int headcount, String r_status, int p_cost) {
+	public boolean InsertDate(String userId, int room, java.sql.Date startDate, java.sql.Date endDate, int headcount, String r_status, int p_cost) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		String sql;
@@ -63,16 +63,17 @@ public class ReservationMgr {
 
 		try {
 			con = pool.getConnection();
-			sql = "INSERT reservation (r_room, startdate, enddate, headcount, r_status, p_cost ) " 
-			+ "VALUES (?, ?, DATE_ADD(?, INTERVAL 1 DAY), ?, ?, ?)";
+			sql = "INSERT reservation (id, r_room, startdate, enddate, headcount, r_status, p_cost ) " 
+			+ "VALUES (?, ?, ?, DATE_ADD(?, INTERVAL 1 DAY), ?, ?, ?)";
 			pstmt = con.prepareStatement(sql);
 
-			pstmt.setInt(1, room);
-			pstmt.setDate(2, startDate);
-			pstmt.setDate(3, endDate);
-			pstmt.setInt(4, headcount);
-			pstmt.setString(5, r_status);
-			pstmt.setInt(6, p_cost);
+			pstmt.setString(1, userId);
+			pstmt.setInt(2, room);
+			pstmt.setDate(3, startDate);
+			pstmt.setDate(4, endDate);
+			pstmt.setInt(5, headcount);
+			pstmt.setString(6, r_status);
+			pstmt.setInt(7, p_cost);
 
 			// executeUpdate : insert, update, delete 실행문
 			int rsInsertDate = pstmt.executeUpdate();
@@ -190,8 +191,8 @@ public class ReservationMgr {
 				rs = pstmt.executeQuery();
 
 				if (rs.next()) {
-					flagForCapaChk = true; // 값이 있다면 true 반환 -> 중복된 일정이 있다.
-					r_capacity = rs.getInt(1); // 룸별 1박당 가격 들고와서 int형 p_cost에 넣기
+					flagForCapaChk = true; 
+					r_capacity = rs.getInt(1); 
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -225,7 +226,7 @@ public class ReservationMgr {
 				rs = pstmt.executeQuery();
 
 				if (rs.next()) {
-					flagForCapaChk = true; // 값이 있다면 true 반환 -> 중복된 일정이 있다.
+					flagForCapaChk = true; 
 					p_cost = rs.getInt(1); // 룸별 1박당 가격 들고와서 int형 p_cost에 넣기
 				}
 			} catch (Exception e) {

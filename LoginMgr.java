@@ -122,6 +122,8 @@ public class LoginMgr {
 		return flagForUserSign;
 	} //---회원가입
 	
+	
+	
 	// UPDATE: 내정보 수정 (회원)
 	public boolean userUpdt(UserBean bean) {
 		Connection con = null;

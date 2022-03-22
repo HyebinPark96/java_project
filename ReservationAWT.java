@@ -31,10 +31,22 @@ import javaproject.CalendarFunc;
 
 public class ReservationAWT{
 	private JFrame jf;
-
+	private String r_status;
 	
-	///////////////////////////////////////// 달력
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ReservationAWT reservationAwt = new ReservationAWT();
+					reservationAwt.jf.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
+	// 생성자
 	public ReservationAWT(String userId) {
 		jf = new JFrame();
 		jf.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -95,7 +107,6 @@ public class ReservationAWT{
 		int sMove;
 		int eMove;
 		
-		///////////////////////////////////////// 달력
 		JButton sBeforeBtn = new JButton("Before");
 		JButton eBeforeBtn = new JButton("Before");
 		JButton sAfterBtn = new JButton("After");
@@ -183,8 +194,6 @@ public class ReservationAWT{
 			}
 		});
 		
-			
-		
 
 		panel5.setLayout(new GridLayout(8, 1)); /* 보더랑헷갈려서 헛짓..; */
 		jf.add(panel5, "East");
@@ -205,11 +214,7 @@ public class ReservationAWT{
 		rsEDateTf.setFont(new Font("맑은 고딕", Font.PLAIN, 20));
 		panel5.add(rsEDateTf);
 		
-		
-		//////////////////////////////
-		// 직접 텍스트필드에 적는 거 말고, 오름내림 버튼 만들어서 
-		// 오름버튼 내림버튼에 액션리스너 달아서 각 호수선택된거에 따라 조건문 적기
-		// 인원 텍스트필드 
+		// 인원 라벨
 		rsHeadcountLb.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		panel5.add(rsHeadcountLb);
 		panel5.add(panel14); // 마지막 행에 panel14 추가 
@@ -218,16 +223,10 @@ public class ReservationAWT{
 		panel14.setLayout(new GridLayout(1,2)); 
 		panel14.add(panel15); // 텍스트필드 들어갈 1열
 		
-		
-		
-		///////////////////////////////////////////테스트
+		// 인원 텍스트필드 : 기본값 1
 		rsHeadcountTf.setText(1+"");
-		///////////////////////////////////////////테스트
-		
-		
 		panel15.add(rsHeadcountTf); 
 		
-	
 		panel14.add(panel16); // 오르내림 버튼 들어갈 2열
 		
 		panel16.setLayout(new BorderLayout());
@@ -241,20 +240,18 @@ public class ReservationAWT{
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("인원 수 증가버튼 클릭");
 				
+				// 1. 현재 예약희망인원 Tf 값 가져오기
 				int headcount = Integer.parseInt(rsHeadcountTf.getText()); // headcount = 1;
 				
-				// 2. headcount, Tf +1씩 증가시키기
+				// 2. headcount +1씩 증가시키고, Tf에 셋팅
 				headcount++;
 				rsHeadcountTf.setText(headcount+"");
 				
-				// 3. 선택룸 들고오기
+				// 3. 최대수용인원과 예약희망인원 비교위해 룸 Tf로부터 선택 룸 가져오기
 				int rsRoom = (Integer.parseInt(rsRoomTf.getText().replaceAll("호", "")));
 				
 				// 4. DB연동해서 선택룸의 최대 수용인원 가져오기 (SEELCT r_capacity)
 				int r_capacity = rsMgr.capacityChk(rsRoom);
-				
-				
-				
 						
 				// 5. headcount(+1 증가된 인원)과 rsMgr.r_capacity(DB상 룸별 최대 수용인원) 비교
 				if(headcount>r_capacity) { // 예약인원 > 최대 수용인원 
@@ -270,19 +267,20 @@ public class ReservationAWT{
 				
 			}
 		});
-		cMinusBtn.addActionListener(new ActionListener() {
-			
+		
+		cMinusBtn.addActionListener(new ActionListener() {	
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("인원 수 감소버튼 클릭");
 				
-				// 1. rsHeadcountTf로부터 예약인원 가져오기
+				// 1. 현재 예약희망인원 Tf 값 가져오기
 				int headcount = Integer.parseInt(rsHeadcountTf.getText());
 				
-				// 2. headcount, Tf +1씩 증가시키기
+				// 2. headcount +1씩 증가시키고, Tf에 셋팅
 				headcount--;
 				rsHeadcountTf.setText(headcount+"");
-
+				
+				// 3. 예약희망인원은 최소 1 이상!
 				if(headcount < 1) {
 					// 경고 알림창
 					JOptionPane.showMessageDialog(null, "1명 이상의 인원만 예약 가능압니다.", "예약인원을 체크해주세요.", JOptionPane.ERROR_MESSAGE);
@@ -297,7 +295,7 @@ public class ReservationAWT{
 		panel16.add("North",panel17);
 		panel16.add("South",panel18);
 		
-		
+		// 결제버튼 클릭 이벤트
 		paymentBtn.addActionListener(new ActionListener() {
 			
 			@Override
@@ -321,7 +319,7 @@ public class ReservationAWT{
 		        	java.util.Date format1 = sdf.parse(date1); // java.util.date yyyyMMdd 형변환
 		        	java.util.Date format2 = sdf.parse(date2); // java.util.date yyyyMMdd 형변환
 			        long diffSec = (format1.getTime() - format2.getTime()) / 1000; // 초 차이
-			        long diffDays = diffSec / (24*60*60); // 일자수 차이
+			        long diffDays = diffSec / (24*60*60); // 일자수 차이 (월 차이가 고려된 일자수임)
 			        System.out.println(diffDays + "일 차이");
 			        
 			        
@@ -333,8 +331,8 @@ public class ReservationAWT{
 					System.out.println("선택하신 시작 날짜 : " + sqlDate);
 					
 					
-					for (int j = 0; j < diffDays/*SELECT 될 레코드 개수*/; j++) { // 달다른거 고려해주기
-						if (rsMgr.dateChk(rsRoom,sqlDate,sqlDate) /*true 반환 -> 중복일정 존재한다는 의미 */) {
+					for (int j = 0; j < diffDays/*SELECT 될 레코드 개수*/; j++) {
+						if (rsMgr.dateChk(rsRoom,sqlDate,sqlDate) /*true 반환 -> 중복일정 존재한다는 의미*/) {
 							// Ex. 20220304 ~ 20220307 예약했는데, 3/6~3/7 중복된 경우 
 							// 1. 지금까지 위 반복문에 의해 insert 되었던 행을 삭제,
 							// 2. 중복된 즉시 break로 반복문 빠져나간다
@@ -356,23 +354,24 @@ public class ReservationAWT{
 								rsMgr.deleteDate(rsRoom, sqlDate, sqlDate);	
 							}
 							System.out.println("중복되는 일정이 있으므로 선택하신 일정이 모두 예약취소 되었습니다. 다시 선택해주십시오.");
+							JOptionPane.showMessageDialog(null, "중복되는 일정이 있으므로 선택하신 일정이 모두 예약취소 되었습니다. 다시 선택해주십시오.");
 							break;
 			
 						} else {
 							int headcount = Integer.parseInt(rsHeadcountTf.getText());
 							// DB와 중복되지 않는 날짜 선택했다면 false 반환
 							
-							// 결제 전 단계인 예약파트에서 결제하기 버튼 누르면 결제 전 상태 셋팅됨
-							String r_status = "결제 전";
+							// 결제 전 단계인 예약파트에서 결제하기 버튼 누르면 무조건 결제 전 상태 셋팅됨
+							ReservationAWT.this.r_status = "결제 전";
 							
-							// 위아래버튼 안누르면 headcount = 1; 기본셋팅 되어있다.
-							// p_cost만 셋팅하면 된다.
+							// 위아래버튼 클릭 안했다면 headcount = 1; 기본셋팅, 클릭했으면 값 설정되어 있음 
+							// 그러므로 p_cost만 셋팅하면 된다.
 							int p_cost = rsMgr.costChk(rsRoom);
 							System.out.println(p_cost + ": 예약하신 룸의 1박당 가격입니다.");
 							
 							
 							// DB INSERT 
-							rsMgr.InsertDate(rsRoom, sqlDate, sqlDate, headcount, r_status, p_cost);
+							rsMgr.InsertDate(userId, rsRoom, sqlDate, sqlDate, headcount, ReservationAWT.this.r_status, p_cost);
 		
 							// INSERT 완료 후 sqlDate 1일씩 증가시켜서 예약 마지막날까지 반복문 돌게 한다.
 							cal.add(Calendar.DATE, 1); // 1일 증가 시키기
@@ -381,15 +380,20 @@ public class ReservationAWT{
 							String plusSqlDate = sdf.format(cal.getTime());
 							System.out.println("선택하신 시작 날짜에서 하루를 증가시킨 날짜 : " + plusSqlDate);
 							try {
+								JOptionPane.showMessageDialog(null, sqlDate + "일 기준 1박 일정이 무사히 예약되셨습니다. 결제창으로 넘어갑니다.");
+								System.out.println(sqlDate + "일 기준 1박 일정이 무사히 예약되셨습니다. 결제창으로 넘어갑니다.");
 								format2 = sdf.parse(plusSqlDate);// String -> java.util.date 변환
 								sqlDate = new java.sql.Date(format2.getTime()); // java.util.date -> java.sql.date 변환
 							} catch (Exception e2) {
 								e2.printStackTrace();
 							}
-							
-							
-							System.out.println("중복되는 일정없이 무사히 예약되셨습니다.");
+
 						}
+					}
+					
+					if(ReservationAWT.this.r_status == "결제 전") {
+						PaymentFrame cpf = new PaymentFrame(userId);
+						jf.dispose();
 					}
 					
 				} catch (ParseException e1) {
@@ -434,7 +438,8 @@ public class ReservationAWT{
 		panel11.add(eLabel);
 		panel11.add(eAfterBtn);
 
-		/////////////////////////////
+		
+		
 		// 시작일 달력 액션리스너 연결
 		sAfterBtn.addActionListener(new ActionListener() {
 			
@@ -442,7 +447,7 @@ public class ReservationAWT{
 			public void actionPerformed(ActionEvent e) {
 				int sMove = 1;
 				
-				// cF객체의 allInit 메소드 호출
+				// sCF객체의 startCal 메소드 호출
 				sCF.startCal(sMove);
 
 				// 해당 달력에 맞는 년도와 월 가져와서 달력 상단 라벨에 셋팅
@@ -457,7 +462,7 @@ public class ReservationAWT{
 			public void actionPerformed(ActionEvent e) {
 				int sMove = -1;
 				
-				// cF객체의 allInit 메소드 호출
+				// sCF객체의 sMove 메소드 호출
 				sCF.startCal(sMove);
 
 				// 해당 달력에 맞는 년도와 월 가져와서 달력 상단 라벨에 셋팅
@@ -472,12 +477,10 @@ public class ReservationAWT{
 
 		// setText : 초기화 -> 해당 달력의 년도와 월로 새로 셋팅
 		sLabel.setText(sCF.setCalText());
-		/////////////////////////////
 
 		
 		
 		
-		/////////////////////////////////////////////
 		// 종료일 달력 액션리스너 연결
 		eAfterBtn.addActionListener(new ActionListener() {
 			
@@ -485,7 +488,7 @@ public class ReservationAWT{
 			public void actionPerformed(ActionEvent e) {
 				int eMove = 1;
 				
-				// cF객체의 allInit 메소드 호출
+				// eCF객체의 startCal 메소드 호출
 				eCF.startCal(eMove);
 		
 				// 해당 달력에 맞는 년도와 월 가져와서 달력 상단 라벨에 셋팅
@@ -498,7 +501,7 @@ public class ReservationAWT{
 			public void actionPerformed(ActionEvent e) {
 				int eMove = -1;
 				
-				// cF객체의 allInit 메소드 호출
+				// eCF객체의 startCal 메소드 호출
 				eCF.startCal(eMove);
 		
 				// 해당 달력에 맞는 년도와 월 가져와서 달력 상단 라벨에 셋팅
@@ -513,12 +516,10 @@ public class ReservationAWT{
 
 		// setText : 초기화 -> 해당 달력의 년도와 월로 새로 셋팅
 		eLabel.setText(eCF.setCalText());
-		/////////////////////////////////////////////
+
 		
 		
 		
-		
-		/////////////////////////////////
 		// 시작일 달력 표시
 		panel12.setLayout(new GridLayout(7, 7, 0, 0));
 
@@ -567,11 +568,9 @@ public class ReservationAWT{
 
 		sCF.setBtn(sDayBtn);
 		sCF.setCal();
-		/////////////////////////////////
-
 		
 		
-		////////////////////////////////////////////
+		
 		// 종료일 달력 표시
 		panel13.setLayout(new GridLayout(7, 7, 0, 0));
 
@@ -587,8 +586,6 @@ public class ReservationAWT{
 					if (eDayBtn[i].getText().length() > 0) {
 						if (e.getSource() == eDayBtn[i]) {
 							
-							/////////////////////////////////////
-							
 							if(eLabel.getText().length()==8 && eDayBtn[i].getText().length() == 1 /*1. 두자리 월 + 한자리 일자 경우*/) {
 								rsEDateTf.setText(eLabel.getText() + String.format("%02d", Integer.parseInt(eDayBtn[i].getText())) + "일");
 							} else if(eLabel.getText().length()==8 && eDayBtn[i].getText().length() == 2/* 2. 두자리 월 + 두자리 일자 경우*/) {
@@ -603,12 +600,12 @@ public class ReservationAWT{
 										+ eDayBtn[i].getText() + "일");
 							}
 							
-							/////////////////////////////////////
 						}
 					}
 				}
 				}
 			});
+			
 			panel13.add(eDayBtn[i]);
 
 			eDayBtn[i].setFont(new Font("SansSerif", Font.BOLD, 24));
@@ -637,20 +634,6 @@ public class ReservationAWT{
 	// 생성자
 	public ReservationAWT() {
 		this(null);
-	} // ---- 생성자
-	
-	
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ReservationAWT reservationAwt = new ReservationAWT();
-					reservationAwt.jf.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	} 
 
 }

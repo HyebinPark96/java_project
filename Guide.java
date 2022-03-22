@@ -92,6 +92,12 @@ public class Guide {
 		
 		//101호 버튼 -> 클릭 시 객실안내 페이지 이동
 		JButton rb101 = new JButton("101호");
+		rb101.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Room101();
+				frame.dispose();
+			}
+		});
 		rb101.setFont(new Font("맑은 고딕", Font.BOLD, 12));
 		rb101.setBackground(Color.WHITE);
 		rb101.setBounds(101, 404, 95, 23);
@@ -99,20 +105,40 @@ public class Guide {
 		
 		//102호 버튼 -> 클릭 시 객실안내 페이지 이동
 		JButton rb102 = new JButton("102호");
+		rb102.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Room102();
+				frame.dispose();
+			}
+		});
 		rb102.setFont(new Font("맑은 고딕", Font.BOLD, 12));
 		rb102.setBackground(Color.WHITE);
 		rb102.setBounds(395, 404, 95, 23);
 		frame.getContentPane().add(rb102);
 		
+		
 		//201호 버튼 -> 클릭 시 객실안내 페이지 이동
 		JButton rb201 = new JButton("201호");
+		rb201.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Room201();
+				frame.dispose();
+			}
+		});
 		rb201.setFont(new Font("맑은 고딕", Font.BOLD, 12));
 		rb201.setBackground(Color.WHITE);
 		rb201.setBounds(700, 404, 95, 23);
 		frame.getContentPane().add(rb201);
 		
+		
 		//202호 버튼 -> 클릭 시 객실안내 페이지 이동
 		JButton rb202 = new JButton("202호");
+		rb202.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Room202();
+				frame.dispose();
+			}
+		});
 		rb202.setFont(new Font("맑은 고딕", Font.BOLD, 12));
 		rb202.setBackground(Color.WHITE);
 		rb202.setBounds(993, 404, 95, 23);
