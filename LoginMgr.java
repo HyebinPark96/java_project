@@ -1,12 +1,15 @@
-// mgr : Manager
+/*-- 로그인매니저 | 마지막 수정날짜: 2022-03-22 | 마지막 수정인: 김서하--*/
 package javaproject;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+
 // DB연동의 기능의 클래스 
 public class LoginMgr {
+	
+	private String logSucId;
 	
 	
 	// 매번 정보 가져오는 과부하 안걸리게 pool에 만든 인스턴스를 담기
@@ -16,6 +19,7 @@ public class LoginMgr {
 		pool = DBConnectionMgr.getInstance();
 	}
 
+	
 	// SELECT : ID,비번 매개변수로 받아서 DB와 일치하는지 학인 후 로그인
 	public String loginChk(String id, String pwd) {
 		Connection con = null;
@@ -29,7 +33,7 @@ public class LoginMgr {
 			con = pool.getConnection();
 			
 			//쿼리문
-			sql = "select id from user where id = ? and pwd = ?";
+			sql = "SELECT id FROM user WHERE id = ? AND pwd = ?";
 			pstmt = con.prepareStatement(sql);
 			
 			pstmt.setString(1, id); // 1 : 첫번째 물음표
@@ -37,16 +41,16 @@ public class LoginMgr {
 			// executeQuery : select 실행문
 			rs = pstmt.executeQuery();
 			
-			if(rs.next())
+			if(rs.next()) {
 				flag = true;  // 값이 있다면 true 반환
-				return rs.getString(1); 
-
+				logSucId = rs.getString(1); // 가져오는 첫번째 열 (id)를 logSucId의 값으로 대입
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			pool.freeConnection(con, pstmt, rs);
 		}
-		return null;
+		return logSucId;
 	}
 	
 	// SELECT : 회원가입시 아이디 중복확인 
@@ -122,9 +126,39 @@ public class LoginMgr {
 		return flagForUserSign;
 	} //---회원가입
 	
+	// SELECT: UpdateUser_회원정보조회
+	public UserBean userInfo(String id) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		UserBean bean = new UserBean();
+
+		try {
+			con = pool.getConnection();
+			sql = "select name, email, phone, birthday, gender from user where id = ? ";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				bean.setName(rs.getString("name"));
+				bean.setEmail(rs.getString("email"));
+				bean.setPhone(rs.getString("phone"));
+				bean.setBirthday(rs.getString("birthday"));
+				bean.setGender(rs.getString("gender"));
+//				System.out.println("[loginMgr_userInfo]: userid:(" + id + ")정보를 bean에 담았습니다.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);			
+		}
+		return bean;
+	}
 	
-	
-	// UPDATE: 내정보 수정 (회원)
+
+	// UPDATE: UpdateUser_내정보 수정 (회원)
 	public boolean userUpdt(UserBean bean) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -149,5 +183,38 @@ public class LoginMgr {
 		}
 		return flagForUserUpdt;
 	} //--내정보수정	
+	
+	// SELECT: ReservationUser_회원예약조회
+		public ReservationBean resInfo(String id) {
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String sql = null;
+			ReservationBean bean = new ReservationBean();
+
+			try {
+				con = pool.getConnection();
+				sql = "select res_no, r_room, startdate, enddate, r_status, p_cost from reservation where id = ? ";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+				
+				if(rs.next()) {
+					bean.setRes_no(rs.getInt("res_no"));
+					bean.setR_room(rs.getInt("r_room"));
+					bean.setStartdate(rs.getString("startdate"));
+					bean.setEnddate(rs.getString("enddate"));
+					bean.setR_status(rs.getString("r_status"));
+					bean.setP_cost(rs.getInt("p_cost"));
+//					System.out.println("[loginMgr_resInfo]: userid:(" + id + ")예약정보를 bean에 담았습니다.");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				pool.freeConnection(con, pstmt, rs);			
+			}
+			return bean;
+		}
+	
 	
 }

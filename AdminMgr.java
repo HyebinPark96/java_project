@@ -1,11 +1,12 @@
-// mgr : Manager
+/* 관리자페이지 예약관리 매니저 | 마지막 수정날짜: 2022-03-22 | 마지막 작성자: 김서하 */
 package javaproject;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Vector;
+
+import javax.swing.JOptionPane;
 
 // DB연동의 기능의 클래스 
 public class AdminMgr {
@@ -16,29 +17,27 @@ public class AdminMgr {
 		pool = DBConnectionMgr.getInstance();
 	}
 
-	public Vector selectAll() {
+	
+	//DB 전체예약내역 조회
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Vector selectAll() { 
 
 		Connection con = null;
 		PreparedStatement pstmt = null;
-		Statement stmt = null;
 		ResultSet rs = null;
 		String sql = null;
 		Vector data = new Vector<>();
 
 		data.clear();
 
-
 		try {
 			con = pool.getConnection();
-			stmt = con.createStatement();
-			rs = stmt.executeQuery("select id, r_room from reservation");
 
 			// 쿼리문
 			sql = "select * from reservation";
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			
-
 			while (rs.next()) {
 				Vector in = new Vector<String>(); // 1개의 레코드 저장하는 벡터 생성
 				String id = rs.getString(1);
@@ -59,37 +58,52 @@ public class AdminMgr {
 				in.add(r_status);
 				in.add(p_cost);
 				in.add(res_no);
-				
-				
+						
 				// 전체 데이터를 저장하는 벡터에 in(1명의 데이터 저장) 벡터 추가
 				data.add(in);
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
 		}
 		return data;
 	}
 
-	private void insert(String id, String r_room) {
 
-		PreparedStatement pstmtAdd = null;
+	//예약삭제: ReservationAdmin 텍스트필드에서 예약번호만 끌어와서 삭제 실행
+	public void delete(String res_no) {
+		
 		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = null;
+		@SuppressWarnings("rawtypes")
+		Vector data = new Vector<>();
 
+		data.clear();
+		
 		try {
-			pstmtAdd = con.prepareStatement("insert into reservation values(?,?)");
-//			insert into member values(? -> 1 ,? -> 2, ? -> 3)" 각각의 ? 에 값 대입
-			pstmtAdd.setString(1, id);
-			pstmtAdd.setString(2, r_room);
+			con = pool.getConnection();
 
-//			대입받은 쿼리를 실행 -> 입력 (insert)
-			pstmtAdd.executeUpdate();
+			// 쿼리문
+			sql = "delete from reservation where res_no = ?";
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setString(1, res_no);
+			//pstmt.executeUpdate();
+			
+			int cnt = pstmt.executeUpdate();
+			if(cnt==1) 
+				JOptionPane.showMessageDialog(null, "예약삭제 완료.");
+			else 
+				JOptionPane.showMessageDialog(null, "예약삭제 실패."); 
 
 		} catch (Exception e) {
 			e.printStackTrace();
-
+		} finally {
+			pool.freeConnection(con, pstmt);
 		}
-
 	}
 
 }

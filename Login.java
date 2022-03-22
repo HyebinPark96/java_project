@@ -131,10 +131,11 @@ public class Login {
 				if(obj == loginBtn) {
 					String userId = logIdTf.getText().trim();
 					String userPwd = logPwdTf.getText().trim();
-					String logSucUserId = mgr.loginChk(userId, userPwd);
-					if(logSucUserId.length()>0/*true*/) {
+					
+					String logSucId = mgr.loginChk(userId, userPwd);
+					if(logSucId != null/*true*/) {
 						// 로그인 성공할 경우
-						JOptionPane.showMessageDialog(null, logIdTf.getText().trim() + "님 로그인 성공하였습니다.");
+						JOptionPane.showMessageDialog(null, userId + "님 로그인 성공하였습니다.");
 						frame.dispose();
 						MainPage mainPage = new MainPage(userId); //new MainPage(); 로그인 성공 시 메인화면으로 이동
 					

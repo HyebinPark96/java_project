@@ -1,8 +1,10 @@
+/*-- 관리자페이지 예약관리 | 마지막 수정날짜: 2022-03-22 | 마지막 수정인: 김서하--*/
+
 package javaproject;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
-import java.awt.BorderLayout;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -18,7 +20,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -30,10 +31,12 @@ public class ReservationAdmin {
 	JFrame jf = new JFrame();
 	
 	private JPanel p1;
-	private JLabel titleLb; 
+	private JLabel titleLb, res_noLb; 
 	private JButton addBtn, uptBtn, delBtn, homeBtn;
+	private JTextField res_noTf;
 	private DefaultTableModel model;
-	private Vector title, data, result; 
+	@SuppressWarnings("rawtypes")
+	private Vector title, result; 
 	private JTable table;
 	private JScrollPane sp;
 	
@@ -51,6 +54,7 @@ public class ReservationAdmin {
 	}
 
 	// 생성자
+	@SuppressWarnings({ "serial", "unchecked" })
 	public ReservationAdmin() {
 		// 기본 셋팅
 		jf.setSize(1200,800);
@@ -78,7 +82,14 @@ public class ReservationAdmin {
 		
 		jf.setTitle("관리자페이지");
 		p1 = new JPanel();
-		model = new DefaultTableModel();
+		
+		model = new DefaultTableModel() {
+			// 테이블 셀 수정 불가 (디폴트: 수정가능)
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		
 		table = new JTable(model);
 		sp = new JScrollPane(table);
 		
@@ -87,9 +98,6 @@ public class ReservationAdmin {
 		jf.setContentPane(p1);
 		p1.setLayout(null);
 		p1.setBackground(Color.white);
-		
-
-		data = new Vector<>();
 		
 		//예약데이터 테이블
 		result = mgr.selectAll();
@@ -107,50 +115,13 @@ public class ReservationAdmin {
 		sp.setBounds(200, 200, 800, 400);
 		p1.add(sp);
 		
-
-		
-		//기능
-
-//		table.addMouseListener(new MouseAdapter() {
-//		
-//		public void mouseClicked(MouseEvent e) {
-//		int index = table.getSelectedRow();	
-//		
-//		Vector in = (Vector) data.get(index);
-//		
-//		String id = (String)in.get(0);
-//		String r_room = (String)in.get(1);
-//		String startdate = (String)in.get(2);
-//		String enddate = (String)in.get(3);
-//		String headcount = (String)in.get(4);
-//		String r_status = (String)in.get(5);
-//		String p_cost = (String)in.get(6);
-//		String res_no = (String)in.get(7);
-//		
-//		idTf.setText(id);
-//		r_roomTf.setText(r_room);
-//		
-//		}
-//			
-//		});
-		
-
-		//홈버튼(메인으로)
+		//홈버튼
 		homeBtn = new JButton("홈으로");
 		homeBtn.setBounds(20, 660, 100, 30);
 		homeBtn.setFont(f2);
 		homeBtn.setForeground(Color.white);
 		homeBtn.setBackground(Color.gray);
 		p1.add(homeBtn);
-		//메인이동
-		homeBtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new MainPage();
-				jf.dispose();
-			}
-		});
-		
 		
 		//타이틀라벨
 		titleLb = new JLabel("전체 예약 조회");
@@ -176,28 +147,74 @@ public class ReservationAdmin {
 		
 		//예약 삭제 버튼
 		delBtn = new JButton("예약 삭제");
-		delBtn.setBounds(520, 620, 100, 30);
+		delBtn.setBounds(900, 620, 100, 30);
 		delBtn.setFont(f2);
 		delBtn.setForeground(Color.black);
 		delBtn.setBackground(Color.white);
 		p1.add(delBtn);		
-
+		
+		//예약번호 라벨
+		res_noLb = new JLabel("예약번호 선택");
+		res_noLb.setBounds(650, 620, 100, 30);
+		res_noLb.setFont(f3);
+		p1.add(res_noLb);
+		
+		//예약번호 텍스트필드
+		res_noTf = new JTextField();
+		res_noTf.setBounds(740,620,150,30);
+		res_noTf.setColumns(10);
+		res_noTf.setEditable(false);
+		p1.add(res_noTf);
+		
+		
+		
+		
 		/*기능 구현*/
 		
-		addBtn.addActionListener(new ActionListener() {
+		//테이블 클릭시 선택cell값 -> 텍스트필드로 끌어오기
+		table.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = table.getSelectedRow();
+				int column = table.getSelectedColumn();
+
+				String res_no = (String)table.getValueAt(row, column);
+				res_noTf.setText(res_no);
+				System.out.println("(ResAdmin)선택된 예약번호:" + res_no);
+				
+			}
+		}); 
+		
+		//예약삭제: 위에서 텍필로 끌어온 값 -> AdminMgr로 써서 삭제
+		delBtn.addActionListener(new ActionListener() {
+			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-			} }
-		);
+				String res_no = res_noTf.getText();
+				mgr.delete(res_no);
+				
+				//삭제 후 디비값 불러오기
+				@SuppressWarnings("rawtypes")
+				Vector result = mgr.selectAll();
+				model.setDataVector(result, title);
+				
+			} 
+		});
 		
-
+		//홈버튼 클릭 액션: 메인으로 이동
+		homeBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new MainPage();
+				jf.dispose();
+				
+			}
+		});
+		
 		// 새로고침
 		jf.validate();
 	}
 
-
 }
-
-
-		
-	

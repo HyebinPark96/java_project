@@ -1,8 +1,6 @@
+/* 회원가입창 | 마지막 수정날짜: 2022-03-22 | 마지막 수정인: 김서하 */
+//회원가입시 mode값은 기본 0 (사용자) 로 설정되어있음
 package javaproject;
-
-//돌리기전에 확인: DB에 phone 타입 char로 해두기
-//mode값은 기본 0 (사용자) 로 설정되어있음
-//생년월일값은 YYYY-MM-DD 로 꼭 입력하기
 
 	import java.awt.Color;
 import java.awt.EventQueue;
@@ -219,7 +217,10 @@ import javax.swing.text.PlainDocument;
 			birthdayTf.setText("YYYY-MM-DD");
 			setVisible(true);
 			
-			// 회원가입완료 액션
+			
+			/* 기능설계 */
+			
+			// 회원가입완료 버튼 액션
 			joinBtn.addActionListener(new ActionListener() {
 				
 				@SuppressWarnings("deprecation")
@@ -239,6 +240,9 @@ import javax.swing.text.PlainDocument;
 						JOptionPane.showMessageDialog(null, "이메일을 입력하세요.");
 					} else if (phoneTf.getText().equals("")) { // 연락처 안씀
 						JOptionPane.showMessageDialog(null, "연락처를 입력하세요");
+					} else if (mgr.idChk(idTf.getText().trim())) {
+						System.out.println("아이디중복확인: DB에 있음");
+						JOptionPane.showMessageDialog(null, "아이디 중복확인을 해주세요.");
 					} else { // 전부 다 쓴거 맞지..?
 						JOptionPane.showMessageDialog(null, "회원가입이 완료되었습니다.");
 						UserBean bean = new UserBean();
@@ -249,10 +253,8 @@ import javax.swing.text.PlainDocument;
 						bean.setPhone(phoneTf.getText());
 						bean.setBirthday(birthdayTf.getText());
 						
-						// new MainPage();//회원가입 버튼 누르면 메인페이지로 이동
-						
 						// radio박스에서 성별값 찾아오기
-						String gen = "여"; // gender가 not null 이어서 기본 여성으로 정의
+						String gen = "여성"; // gender가 not null 이어서 기본 여성으로 정의
 						bean.setGender(gen);
 						if (femaleRB.isSelected()) {
 							gen = "여";
@@ -268,7 +270,8 @@ import javax.swing.text.PlainDocument;
 				}
 
 			});
-			// 중복확인 액션
+			
+			// 아이디 중복확인 버튼 액션
 			idCheckBtn.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent e) {

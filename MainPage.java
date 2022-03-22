@@ -109,7 +109,7 @@ public class MainPage {
 					JOptionPane.showMessageDialog(null, "로그인을 먼저 진행해주세요.");
 					System.out.println(userId + " : 아이디 못 불러옴");	
 				} else { // 회원 (userId)
-					new ReservationAWT(userId);
+					new UpdateUser(userId);
 					System.out.println(userId + "님이 마이페이지 버튼을 클릭했습니다.");
 				}
 			}

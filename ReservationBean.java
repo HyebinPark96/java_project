@@ -1,3 +1,4 @@
+/* 예약테이블 빈 | 마지막 수정날짜: 2022-03-22 | 마지막 수정인: 김서하 */
 package javaproject;
 
 /*빈즈(Beans:콩) 만드는 순서
@@ -9,9 +10,9 @@ public class ReservationBean/* 테이블명+Bean */ {
 	// 컬럼별 private 변수 선언
 	private String id;
 	private int r_room;
-	private int startdate;
-	private int enddate;
-	private int r_capacity;
+	private String startdate;
+	private String enddate;
+	private int headcount;
 	private String r_status;
 	private int p_cost;
 	private int res_no;
@@ -22,14 +23,14 @@ public class ReservationBean/* 테이블명+Bean */ {
 	}
 
 	// 매개변수 생성자
-	public ReservationBean(String id, int r_room, int startdate,
-			int enddate, int r_capacity, String r_status,
+	public ReservationBean(String id, int r_room, String startdate,
+			String enddate, int headcount, String r_status,
 			int p_cost, int res_no) {
 		this.id = id;
 		this.r_room = r_room;
 		this.startdate = startdate;
 		this.enddate = enddate;
-		this.r_capacity = r_capacity;
+		this.headcount = headcount;
 		this.r_status = r_status;
 		this.p_cost = p_cost;
 		this.res_no = res_no;
@@ -52,28 +53,28 @@ public class ReservationBean/* 테이블명+Bean */ {
 		this.r_room = r_room;
 	}
 
-	public int getStartdate() {
+	public String getStartdate() {
 		return startdate;
 	}
 
-	public void setStartdate(int startdate) {
+	public void setStartdate(String startdate) {
 		this.startdate = startdate;
 	}
 
-	public int getEnddate() {
+	public String getEnddate() {
 		return enddate;
 	}
 
-	public void setEnddate(int enddate) {
+	public void setEnddate(String enddate) {
 		this.enddate = enddate;
 	}
 
-	public int getR_capacity() {
-		return r_capacity;
+	public int getHeadcount() {
+		return headcount;
 	}
 
-	public void setR_capacity(int r_capacity) {
-		this.r_capacity = r_capacity;
+	public void setHeadcount(int headcount) {
+		this.headcount = headcount;
 	}
 
 	public String getR_status() {

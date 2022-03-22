@@ -7,6 +7,7 @@ import java.awt.CheckboxGroup;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Label;
@@ -37,14 +38,18 @@ public class PaymentFrame {
 	
 	// 생성자
 	public PaymentFrame(String userId) {
+		Font f1 = new Font("맑은 고딕", Font.BOLD, 40); //타이틀 폰트
+		Font f2 = new Font("맑은 고딕", Font.BOLD, 12); //버튼 폰트
 		Panel p1, p2, p3, p4;
 		Checkbox agmCb[]; // 약관 동의 체크박스들 배열원소로 담기
 
 		Label title; // 결제하기
 		Label agmTitle = new Label("이용약관"); // 이용약관
+		agmTitle.setFont(f2);
 		Label agmLb[]; // 약관 동의 문장 배열원소로 담기
 
 		Label cardNameLb = new Label("결제수단");
+		cardNameLb.setFont(f2);
 		String cardName[] = { "삼성", "비씨", "하나", "카카오뱅크", "KB국민", "우리", "신한", "NH채움" };
 		JRadioButton cardBtn[]; // 카드사 선택 버튼
 		ButtonGroup cdBtg; // 버튼 그룹
@@ -68,6 +73,8 @@ public class PaymentFrame {
 		jf.setLayout(null);
 
 		title = new Label("결제하기");
+		title.setFont(f1);
+		
 
 		agmLb = new Label[3];
 		agmLb[0] = new Label("전자금융거래 이용약관");
@@ -98,10 +105,10 @@ public class PaymentFrame {
 			});
 		}
 
-		title.setBounds(280, 30, 50, 50);
+		title.setBounds(220, 10, 200, 50);
 		jf.add(title);
 
-		agmTitle.setBounds(60, 70, 50, 20);
+		agmTitle.setBounds(60, 70, 70, 20);
 		jf.add(agmTitle);
 
 		agmLb[0].setBounds(80, 100, 150, 20);
@@ -117,7 +124,7 @@ public class PaymentFrame {
 			jf.add(agmCb[i]);
 		}
 
-		cardNameLb.setBounds(60, 150, 50, 20); // 결제수단 라벨
+		cardNameLb.setBounds(60, 150, 70, 20); // 결제수단 라벨
 		jf.add(cardNameLb); // 라벨 추가
 
 		// 카드사 선택하기 위해 radio버튼 그룹 만들기

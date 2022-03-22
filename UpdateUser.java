@@ -1,3 +1,5 @@
+/* 사용자 마이페이지 내정보수정 | 마지막 수정날짜: 2022-03-22 | 마지막 수정인: 김서하 */
+
 package javaproject;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -26,7 +28,7 @@ public class UpdateUser {
 	
 	private JPanel p1;
 	private JLabel titleLb, pwdLb, newPwdLb, idLb, nameLb, emailLb, birthdayLb, genderLb, phoneLb; 
-	private JButton updateBtn, listBtn, saveBtn, homeBtn;
+	private JButton updateBtn, listBtn, saveBtn, homeBtn, changePwdBtn, changeEmailBtn, changePhoneBtn;
 	private JTextField idTf, nameTf, emailTf, birthdayTf, phoneTf, genderTf;
 	private JPasswordField pwdTf, newPwdTf;
 	
@@ -35,7 +37,8 @@ public class UpdateUser {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					new UpdateUser();
+					UpdateUser updateUser = new UpdateUser();
+					updateUser.jf.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -43,8 +46,9 @@ public class UpdateUser {
 		});
 	}
 
-	// 생성자
-	public UpdateUser() {
+	// 생성자 (매개변수)
+	public UpdateUser(String userId) {
+		
 		// 기본 셋팅
 		jf.setSize(1200,800);
 		jf.setVisible(true);
@@ -70,7 +74,7 @@ public class UpdateUser {
 		Font f3 = new Font("맑은 고딕", Font.BOLD, 12); //라벨 폰트
 		
 
-		jf.setTitle("마이페이지");
+		jf.setTitle(userId+"  마이페이지");
 		p1 = new JPanel();
 		
 		//파넬꾸미기
@@ -79,7 +83,7 @@ public class UpdateUser {
 		p1.setLayout(null);
 		p1.setBackground(Color.white);
 
-		//정보수정버튼(탭)
+		//정보수정버튼(현재선택됨)
 		updateBtn = new JButton("내정보수정");
 		updateBtn.setBounds(20, 200, 100, 30);
 		updateBtn.setFont(f2);
@@ -88,21 +92,13 @@ public class UpdateUser {
 		updateBtn.setEnabled(false);
 		p1.add(updateBtn);
 		
-		//예약조회버튼(탭)
+		//예약조회버튼
 		listBtn = new JButton("내예약조회");
 		listBtn.setBounds(20, 250, 100, 30);
 		listBtn.setFont(f2);
 		listBtn.setForeground(Color.white);
 		listBtn.setBackground(Color.black);
 		p1.add(listBtn);
-		
-		listBtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new ReservationUser();
-				jf.dispose();
-			}
-		});
 		
 		//홈버튼(메인으로)
 		homeBtn = new JButton("홈으로");
@@ -111,15 +107,6 @@ public class UpdateUser {
 		homeBtn.setForeground(Color.white);
 		homeBtn.setBackground(Color.gray);
 		p1.add(homeBtn);
-		
-		homeBtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new MainPage();
-				jf.dispose();
-			}
-		});
-		
 		
 		//타이틀라벨
 		titleLb = new JLabel("내 정보 수정");
@@ -136,32 +123,52 @@ public class UpdateUser {
 		idTf = new JTextField();
 		idTf.setColumns(10);
 		idTf.setBounds(450, 220, 240, 20);
-		//idTf.setEditable(false);
+		idTf.setText(userId);
+		idTf.setEditable(false);
 		p1.add(idTf);
 		
-		//"비밀번호" 라벨
-		pwdLb = new JLabel("비밀번호");
+		//"새 비밀번호" 라벨
+		pwdLb = new JLabel("새 비밀번호");
 		pwdLb.setFont(f3);
-		pwdLb.setBounds(450, 250, 70, 20);
+		pwdLb.setBounds(450, 250, 90, 20);
 		p1.add(pwdLb);
-		//"비밀번호" 텍스트필드
+		//"새 비밀번호" 텍스트필드
 		pwdTf = new JPasswordField();
 		pwdTf.setColumns(10);
 		pwdTf.setBounds(450, 270, 240, 20);
 		pwdTf.setEchoChar('●');
+		pwdTf.setEditable(false);
 		p1.add(pwdTf);		
 		
-		//"새 비밀번호" 라벨
-		newPwdLb = new JLabel("새 비밀번호");
+		//비밀번호 수정 버튼(새 비밀번호 텍스트필드 활성화)
+		changePwdBtn = new JButton("비밀번호 변경하기");
+		changePwdBtn.setBounds(700, 270, 150, 20);
+		changePwdBtn.setFont(f2);
+		changePwdBtn.setForeground(Color.white);
+		changePwdBtn.setBackground(Color.gray);
+		p1.add(changePwdBtn);
+		changePwdBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				pwdTf.setEditable(true);
+				newPwdTf.setEditable(true);
+			}
+		});
+		
+		//"새 비밀번호 확인" 라벨
+		newPwdLb = new JLabel("새 비밀번호 확인");
 		newPwdLb.setFont(f3);
-		newPwdLb.setBounds(450, 300, 70, 20);
+		newPwdLb.setBounds(450, 300, 110, 20);
 		p1.add(newPwdLb);
-		//"새 비밀번호" 텍스트필드
+		//"새 비밀번호 확인" 텍스트필드
 		newPwdTf = new JPasswordField();
 		newPwdTf.setColumns(10);
 		newPwdTf.setBounds(450, 320, 240, 20);
 		newPwdTf.setEchoChar('●');
+		newPwdTf.setEditable(false);
 		p1.add(newPwdTf);	
+		
 		
 		//"이름" 라벨
 		nameLb = new JLabel("이름");
@@ -208,7 +215,23 @@ public class UpdateUser {
 		emailTf = new JTextField();
 		emailTf.setColumns(10);
 		emailTf.setBounds(450, 520, 240, 20);
-		p1.add(emailTf);		
+		emailTf.setEditable(false);
+		p1.add(emailTf);
+		//이메일 수정 버튼(새 비밀번호 텍스트필드 활성화)
+		changeEmailBtn = new JButton("이메일 변경하기");
+		changeEmailBtn.setBounds(700, 520, 150, 20);
+		changeEmailBtn.setFont(f2);
+		changeEmailBtn.setForeground(Color.white);
+		changeEmailBtn.setBackground(Color.gray);
+		p1.add(changeEmailBtn);
+		changeEmailBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				emailTf.setEditable(true);
+			}
+		});
+		
 		
 		//"연락처" 라벨
 		phoneLb = new JLabel("연락처");
@@ -219,7 +242,22 @@ public class UpdateUser {
 		phoneTf = new JTextField();
 		phoneTf.setColumns(10);
 		phoneTf.setBounds(450, 570, 240, 20);
-		p1.add(phoneTf);		
+		phoneTf.setEditable(false);
+		p1.add(phoneTf);	
+		//연락처 수정 버튼(새 비밀번호 텍스트필드 활성화)
+		changePhoneBtn = new JButton("연락처 변경하기");
+		changePhoneBtn.setBounds(700, 570, 150, 20);
+		changePhoneBtn.setFont(f2);
+		changePhoneBtn.setForeground(Color.white);
+		changePhoneBtn.setBackground(Color.gray);
+		p1.add(changePhoneBtn);
+		changePhoneBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				phoneTf.setEditable(true);
+			}
+		});
 		
 		//"저장" 버튼
 		saveBtn = new JButton("저장");
@@ -228,11 +266,24 @@ public class UpdateUser {
 		saveBtn.setForeground(Color.WHITE);
 		saveBtn.setBackground(Color.BLACK);
 		p1.add(saveBtn);
-		
-		
-
-		
+				
 		/*기능 구현*/
+		
+		//id값으로 내 정보 받아오기
+		
+		nameTf.setText(mgr.userInfo(userId).getName());
+		birthdayTf.setText(mgr.userInfo(userId).getBirthday());
+		genderTf.setText(mgr.userInfo(userId).getGender());
+		emailTf.setText(mgr.userInfo(userId).getEmail());
+		phoneTf.setText(mgr.userInfo(userId).getPhone());
+		
+		// 정보 잘 받아옴?
+		if (!nameTf.getText().equals("") && !birthdayTf.getText().equals("") && !genderTf.getText().equals("")) {
+			System.out.println("[update User]: id(" + userId + ")정보 불러오기 성공");
+		}else {
+			System.out.println("[update User]: id(" + userId + ")정보 불러오기 실패");
+		}
+		
 		
 		//수정된 정보 저장
 		saveBtn.addActionListener(new ActionListener() {
@@ -276,14 +327,36 @@ public class UpdateUser {
 					}else {
 						JOptionPane.showMessageDialog(null, "비밀번호가 일치하지 않습니다.");
 					}
-					
 				}
 		// 새로고침
 		jf.validate();
 	}
 });
-
+		// 예약조회버튼 액션: 내 예약내역 조회
+		listBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ReservationUser(userId);
+				jf.dispose();
+			}
+		});
+		
+		//홈버튼액션: 메인으로
+		homeBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new MainPage(userId);
+				jf.dispose();
+			}
+		});
+		
 }
+
+	// 생성자
+	public UpdateUser() {
+		this(null);
+	}
+
 }
 		
 	

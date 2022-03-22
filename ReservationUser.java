@@ -1,3 +1,5 @@
+/* 사용자 마이페이지 내예약조회 | 마지막 수정날짜: 2022-03-22 | 마지막 수정인: 김서하 */
+
 package javaproject;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -19,10 +21,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import member.DialogBox;
-
-//예약인원 추가할지 고민해보기 - 예약테이블에 예약인원컬럼, 방테이블에 수용인원 컬럼이 있어야함.
-
 public class ReservationUser {
 
 	LoginMgr mgr = new LoginMgr();
@@ -39,7 +37,8 @@ public class ReservationUser {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					new ReservationUser();
+					ReservationUser reservationUser = new ReservationUser();
+					reservationUser.jf.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -47,8 +46,8 @@ public class ReservationUser {
 		});
 	}
 
-	// 생성자
-	public ReservationUser() {
+	// 생성자 (매개변수)
+	public ReservationUser(String userId) {
 		// 기본 셋팅
 		jf.setSize(1200,800);
 		jf.setVisible(true);
@@ -74,7 +73,7 @@ public class ReservationUser {
 		Font f3 = new Font("맑은 고딕", Font.BOLD, 12); //라벨 폰트
 		
 
-		jf.setTitle("회원 예약 조회");
+		jf.setTitle(userId+"회원 예약 조회");
 		p1 = new JPanel();
 		
 		//파넬꾸미기
@@ -90,15 +89,7 @@ public class ReservationUser {
 		updateBtn.setForeground(Color.white);
 		updateBtn.setBackground(Color.black);
 		p1.add(updateBtn);
-		//정보수정으로 이동
-		updateBtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new UpdateUser();
-				jf.dispose();
-			}
-		});
-		
+
 		//예약조회버튼(탭)
 		listBtn = new JButton("내예약조회");
 		listBtn.setBounds(20, 250, 100, 30);
@@ -115,16 +106,8 @@ public class ReservationUser {
 		homeBtn.setForeground(Color.white);
 		homeBtn.setBackground(Color.gray);
 		p1.add(homeBtn);
-		//메인이동
-		homeBtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new MainPage();
-				jf.dispose();
-			}
-		});
-		
-		
+
+
 		//타이틀라벨
 		titleLb = new JLabel("내 예약 조회");
 		titleLb.setFont(f1);
@@ -140,6 +123,7 @@ public class ReservationUser {
 		res_noTf = new JTextField();
 		res_noTf.setColumns(10);
 		res_noTf.setBounds(520, 260, 160, 20);
+		res_noTf.setEditable(false);
 		p1.add(res_noTf);
 		
 		//"아이디" 라벨
@@ -151,19 +135,20 @@ public class ReservationUser {
 		idTf = new JTextField();
 		idTf.setColumns(10);
 		idTf.setBounds(520, 290, 160, 20);
-		//idTf.setEditable(false);
+		idTf.setText(userId);
+		idTf.setEditable(false);
 		p1.add(idTf);
 		
 		//"이름" 라벨
 		nameLb = new JLabel("예약자 성명");
 		nameLb.setFont(f3);
 		nameLb.setBounds(450, 320, 100, 20);
-		p1.add(nameLb);
+//		p1.add(nameLb);
 		//"이름" 텍스트필드
 		nameTf = new JTextField();
 		nameTf.setColumns(10);
 		nameTf.setBounds(520, 320, 160, 20);
-		p1.add(nameTf);
+//		p1.add(nameTf);
 		
 		//"예약 객실" 라벨
 		r_roomLb = new JLabel("예약객실");
@@ -174,6 +159,7 @@ public class ReservationUser {
 		r_roomTf = new JTextField();
 		r_roomTf.setColumns(10);
 		r_roomTf.setBounds(520, 350, 160, 20);
+		r_roomTf.setEditable(false);
 		p1.add(r_roomTf);
 		
 		//"체크인" 라벨
@@ -185,6 +171,7 @@ public class ReservationUser {
 		startdateTf = new JTextField();
 		startdateTf.setColumns(10);
 		startdateTf.setBounds(520, 380, 160, 20);
+		startdateTf.setEditable(false);
 		p1.add(startdateTf);
 		
 		//"체크아웃" 라벨
@@ -196,6 +183,7 @@ public class ReservationUser {
 		enddateTf = new JTextField();
 		enddateTf.setColumns(10);
 		enddateTf.setBounds(520, 410, 160, 20);
+		enddateTf.setEditable(false);
 		p1.add(enddateTf);		
 		
 		//"결제 상태" 라벨
@@ -218,7 +206,7 @@ public class ReservationUser {
 		p_costTf = new JTextField();
 		p_costTf .setColumns(10);
 		p_costTf .setBounds(520, 470, 160, 20);
-		p1.add(p_costTf );	
+		p1.add(p_costTf);	
 		
 		//"비밀번호" 라벨
 		pwdLb = new JLabel("비밀번호");
@@ -246,8 +234,33 @@ public class ReservationUser {
 		
 		/*기능 구현*/
 		
-		// 예약정보불러오기
-		
+		// id값으로 내 예약정보불러오기
+		if (mgr.resInfo(userId).getRes_no()==0) {
+			JOptionPane.showMessageDialog(null, "예약내역이 없습니다.");
+		}else {
+			res_noTf.setText(""+mgr.resInfo(userId).getRes_no());
+			r_roomTf.setText(""+mgr.resInfo(userId).getR_room());
+			startdateTf.setText(mgr.resInfo(userId).getStartdate());
+			enddateTf.setText(mgr.resInfo(userId).getEnddate());
+			r_statusTf.setText(mgr.resInfo(userId).getR_status());
+			p_costTf.setText(""+mgr.resInfo(userId).getP_cost());
+			if (res_noTf.getText().equals("")) {
+				System.out.println("[ReservationUser]: id("+userId + ")예약 번호 불러오기 실패");
+			} else if (r_roomTf.getText().equals("")) {
+				System.out.println("[ReservationUser]: id("+ userId + ")예약 객실 불러오기 실패");
+			} else if (startdateTf.getText().equals("")) {
+				System.out.println("[ReservationUser]: id("+ userId + ")체크인날짜 불러오기 실패");	
+			} else if (enddateTf.getText().equals("")) {
+				System.out.println("[ReservationUser]: id("+ userId + ")체크아웃날짜 불러오기 실패");
+			} else if (r_statusTf.getText().equals("")) {
+				System.out.println("[ReservationUser]: id("+ userId + ")결제상태 불러오기 실패");
+			} else if (p_costTf.getText().equals("")) {
+				System.out.println("[ReservationUser]: id("+ userId + ")결제금액 불러오기 실패");	
+			} else {
+				System.out.println("[ReservationUser]: id("+userId + ")예약 정보 불러오기 성공!");
+			}
+		}
+
 		// 예약 취소
 		cancelBtn.addActionListener(new ActionListener() {
 			
@@ -269,8 +282,30 @@ public class ReservationUser {
 		jf.validate();
 	}
 });
-
+		//정보수정버튼 액션
+		updateBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new UpdateUser(userId);
+				jf.dispose();
+			}
+		});
+		
+		
+		//홈버튼 액션 
+		homeBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new MainPage(userId);
+				jf.dispose();
+			}
+		});
 }
+
+	// 생성자
+	public ReservationUser() {
+		this(null);
+	}
 }
 		
 	
