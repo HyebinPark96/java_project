@@ -258,7 +258,7 @@ public class ReservationUser {
 				if (pwdTf.getText().equals("")) { // 비밀번호 안씀
 					JOptionPane.showMessageDialog(null, "비밀번호를 입력하세요.");
 				} else if (!pwdTf.getText().equals("")) { //비번은썼음
-					if(mgr.loginChk(idTf.getText().trim(), pwdTf.getText().trim())/* true */) { // 비밀번호와 아이디 체크
+					if(mgr.loginChk(idTf.getText().trim(), pwdTf.getText().trim()).length()>0/* true */) { // 비밀번호와 아이디 체크
 						JOptionPane.showMessageDialog(null, "예약취소를 하겠습니까?");
 					}else {
 						JOptionPane.showMessageDialog(null, "비밀번호가 일치하지 않습니다.");

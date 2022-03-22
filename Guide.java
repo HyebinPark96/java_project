@@ -23,8 +23,8 @@ public class Guide {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Guide window = new Guide();
-					window.frame.setVisible(true);
+					Guide guide = new Guide();
+					guide.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -33,18 +33,20 @@ public class Guide {
 	}
 
 	public Guide() {//생성자
-		initialize();
+		this(null);
 	}
-
 	
-	private void initialize() {//프레임설정
+	public Guide(String userId) {
 		frame = new JFrame();
 		frame.setForeground(Color.WHITE);
 		frame.getContentPane().setBackground(Color.WHITE);
 		frame.setBounds(100, 100, 1200, 800);
+		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);
+		
+		frame.setTitle(userId + "님 반갑습니다.");
 		
 		JLabel titleLb = new JLabel("펜션 소개");
 		titleLb.setBackground(Color.WHITE);
@@ -145,7 +147,7 @@ public class Guide {
 		JButton homeBtn = new JButton("Home");
 		homeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new MainPage();
+				new MainPage(userId);
 				frame.dispose();
 			}
 		});
@@ -155,4 +157,6 @@ public class Guide {
 		homeBtn.setBounds(12, 730, 67, 23);
 		frame.getContentPane().add(homeBtn);
 	}
+	
+	
 }

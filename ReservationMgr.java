@@ -7,8 +7,8 @@ import java.util.Date;
 
 public class ReservationMgr {
 	
-	int r_capacity;
-	int p_cost;
+	private int r_capacity;
+	private int p_cost;
 
 	// 매번 정보 가져오는 과부하 안걸리게 pool에 만든 인스턴스를 담기
 	private DBConnectionMgr pool;
@@ -55,7 +55,7 @@ public class ReservationMgr {
 	
 	
 	// (테스트)INSERT : 날짜 넣기
-	public boolean testInsertDate(int room, java.sql.Date startDate, java.sql.Date endDate, int headcount, String r_status, int p_cost) {
+	public boolean InsertDate(int room, java.sql.Date startDate, java.sql.Date endDate, int headcount, String r_status, int p_cost) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		String sql;
@@ -75,11 +75,12 @@ public class ReservationMgr {
 			pstmt.setInt(6, p_cost);
 
 			// executeUpdate : insert, update, delete 실행문
-			int aaa = pstmt.executeUpdate();
+			int rsInsertDate = pstmt.executeUpdate();
 			
 			// 적용된 레코드 개수 : 에러 및 처리 : 0, 정상적인 처리 : 1 (1행씩 넣을거니까)
-			if (aaa == 1)
+			if (rsInsertDate == 1)
 				flagForInsertDate = true; // 값이 있다면 true 반환
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -151,10 +152,10 @@ public class ReservationMgr {
 				pstmt.setDate(3, endDate);
 
 				// executeUpdate : insert, update, delete 실행문
-				int bbb = pstmt.executeUpdate();
+				int rsDeleteDate = pstmt.executeUpdate();
 				
 				// 적용된 레코드 개수 : 에러 및 처리 : 0, 정상적인 처리 : 1 (1행씩 넣을거니까)
-				if (bbb == 1)
+				if (rsDeleteDate == 1)
 					flagForDeleteDate = true; // 중복된 값이 있어야 삭제가능하다는 뜻이며, true 반환
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -166,7 +167,7 @@ public class ReservationMgr {
 	
 
 		// 룸별 최대수용인원과 예약인원 체크
-		public boolean capacityAndCostChk(int room) {
+		public int capacityChk(int room) {
 			Connection con = null;
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
@@ -177,7 +178,7 @@ public class ReservationMgr {
 				con = pool.getConnection();
 
 				// 쿼리문
-				sql = "SELECT p_cost, r_capacity " 
+				sql = "SELECT r_capacity " 
 				+ "FROM room " 
 				+ "WHERE r_room = ?";
 
@@ -188,19 +189,52 @@ public class ReservationMgr {
 				// executeQuery : select 실행문
 				rs = pstmt.executeQuery();
 
-				if (rs.next())
+				if (rs.next()) {
 					flagForCapaChk = true; // 값이 있다면 true 반환 -> 중복된 일정이 있다.
-					p_cost = rs.getInt(1); // 룸별 1박당 가격 들고와서 int형 p_cost에 넣기
-					r_capacity = rs.getInt(2); // 룸별 최대수용인원 들고와서 int형 r_capacity에 넣기
-					
+					r_capacity = rs.getInt(1); // 룸별 1박당 가격 들고와서 int형 p_cost에 넣기
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				pool.freeConnection(con, pstmt, rs);
 			}
-			return flagForCapaChk;
+			return r_capacity;
 		}
 
+		// 룸별 1박당가격 체크
+		public int costChk(int room) {
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String sql;
+			boolean flagForCapaChk = false;
+
+			try {
+				con = pool.getConnection();
+
+				// 쿼리문
+				sql = "SELECT p_cost " 
+				+ "FROM room " 
+				+ "WHERE r_room = ?";
+
+				pstmt = con.prepareStatement(sql);
+
+				pstmt.setInt(1, room); // 1은 첫번째 ?를 의미
+
+				// executeQuery : select 실행문
+				rs = pstmt.executeQuery();
+
+				if (rs.next()) {
+					flagForCapaChk = true; // 값이 있다면 true 반환 -> 중복된 일정이 있다.
+					p_cost = rs.getInt(1); // 룸별 1박당 가격 들고와서 int형 p_cost에 넣기
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				pool.freeConnection(con, pstmt, rs);
+			}
+			return p_cost;
+		}
 			
 		
 		

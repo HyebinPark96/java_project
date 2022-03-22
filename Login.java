@@ -32,13 +32,15 @@ public class Login {
 	private JFrame frame;
 	private JTextField idTf;
 	private JTextField pwdTf;
+	private String id;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Login window = new Login();
-					window.frame.setVisible(true);
+					Login login = new Login();
+					login.frame.setVisible(true);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -47,20 +49,34 @@ public class Login {
 	}
 
 	public Login() {
+		System.out.println("생성자 실행");
 		//메소드 호출
 		initialize();
-	
+		
 	}
 
+
+	
+	public void setId(String id) {
+		this.id = id;
+		System.out.println(this.id + " : setId");
+	}
+	
+	public String getId() {
+		System.out.println(id + " : getId함수");
+		return id;
+	}
+
+
 	//프레임 설정
-	private void initialize() {
+	public void initialize() {
 		frame = new JFrame();
 		frame.getContentPane().setBackground(Color.WHITE);
 		frame.setBounds(100, 100, 500, 613);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setLocationRelativeTo(null);//팝업시 화면 가운데로 뜨기
-		frame.setTitle("로그인 페이지");
+		frame.setTitle("로그인");
 		frame.setVisible(true);
 		
 		
@@ -117,6 +133,7 @@ public class Login {
 		pwdTf.setColumns(10);
 		pwdTf.setEchoChar('*');//비밀번호 입력시 *로 출력
 		
+		
 		//로그인 버튼 클릭 시, DB베이스 연동되어 로그인 성공 or 실패여부 확인
 		JButton loginbutton = new JButton("로그인");
 		loginbutton.addActionListener(new ActionListener() {
@@ -124,10 +141,16 @@ public class Login {
 				Object obj = e.getSource();
 				//클릭 이벤트 
 				if(obj == loginbutton) {
-					if(mgr.loginChk(idTf.getText().trim(), pwdTf.getText().trim())/*true*/) {
-						JOptionPane.showMessageDialog(null, "로그인 성공하였습니다.");
-						//new MainPage();//로그인 성공 시 메인화면으로 이동
+					String userId = idTf.getText().trim();
+					String userPwd = pwdTf.getText().trim();
+					String logSucUserId = mgr.loginChk(userId, userPwd);
+					if(logSucUserId.length()>0/*true*/) {
+						// 로그인 성공할 경우
+						JOptionPane.showMessageDialog(null, idTf.getText().trim() + "님 로그인 성공하였습니다.");
 						frame.dispose();
+						MainPage mainPage = new MainPage(userId); //new MainPage(); 로그인 성공 시 메인화면으로 이동
+						
+					
 						
 					}else {
 						JOptionPane.showMessageDialog(null, "아이디 또는 비밀번호가 정확하지 않습니다.");
@@ -136,7 +159,11 @@ public class Login {
 					}
 				}
 			}
+
+			
 		});
+		
+		
 		loginbutton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		loginbutton.setForeground(Color.WHITE);
 		loginbutton.setBackground(Color.BLACK);
@@ -175,4 +202,6 @@ public class Login {
 		joinbutton.setBounds(105, 314, 216, 40);
 		panel_2.add(joinbutton);
 	}
+	
+	
 }

@@ -250,7 +250,7 @@ public class UpdateUser {
 				} else if (!newPwdTf.getText().equals("")) { // 새 비밀번호 씀
 					if (pwdTf.getText().equals("")) {
 						JOptionPane.showMessageDialog(null, "기존 비밀번호를 입력하세요.");
-					} else if (mgr.loginChk(idTf.getText().trim(), pwdTf.getText().trim())/* true */) { // 비밀번호와 아이디 체크
+					} else if (mgr.loginChk(idTf.getText().trim(), pwdTf.getText().trim()).length()>0/* true */) { // 비밀번호와 아이디 체크
 						UserBean bean = new UserBean();
 						bean.setId(idTf.getText());
 						bean.setPwd(newPwdTf.getText());
@@ -265,7 +265,7 @@ public class UpdateUser {
 						JOptionPane.showMessageDialog(null, "비밀번호가 일치하지 않습니다.");
 					}
 				} else if (newPwdTf.getText().equals("")) { // 새 비밀번호 없이 다른 정보만 변경저장
-					if(mgr.loginChk(idTf.getText().trim(), pwdTf.getText().trim())) {
+					if(mgr.loginChk(idTf.getText().trim(), pwdTf.getText().trim()).length()>0) {
 						UserBean bean = new UserBean();
 						bean.setId(idTf.getText());
 						bean.setPwd(pwdTf.getText()); //기존 비밀번호 그대로 덮어씌움

@@ -12,18 +12,32 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 public class MainPage {
 	
 	private JFrame frame;
 	
-	//생성자
-	public MainPage() {
-		initialize();
-	}
+	//메인
+	public static void main(String[] args) {
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+							MainPage mainPage = new MainPage();
+							mainPage.frame.setVisible(true);					
+						
 
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+	}
 	
-	private void initialize() {//프레임 설정
+	
+	//생성자 (매개변수)
+	public MainPage(String userId) {
+		
 		frame = new JFrame();
 		frame.getContentPane().setBackground(Color.WHITE);
 		frame.setBounds(100, 100, 1200, 800);
@@ -31,6 +45,9 @@ public class MainPage {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);
+
+		frame.setTitle(userId + "님 반갑습니다.");
+		System.out.println(userId + "님이 로그인 하셨습니다.");
 	
 		
 		//JLabel 이미지추가
@@ -59,7 +76,8 @@ public class MainPage {
 		JButton loginbutton = new JButton("로그인");
 		loginbutton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new Login();
+				Login login = new Login();
+				frame.dispose();
 			}
 		});
 		loginbutton.setBackground(Color.WHITE);
@@ -84,6 +102,15 @@ public class MainPage {
 		JButton reservationbutton = new JButton("예약");
 		reservationbutton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				if(userId!=null) {
+					new ReservationAWT(userId);
+					System.out.println(userId + "님이 예약버튼을 클릭했습니다.");
+				} else {
+					JOptionPane.showMessageDialog(null, "로그인을 먼저 진행해주세요.");
+					System.out.println(userId + " : 아이디 못 불러옴");
+				}
+				
 			}
 		});
 		reservationbutton.setFont(new Font("맑은 고딕", Font.BOLD, 12));
@@ -95,7 +122,7 @@ public class MainPage {
 		JButton guidebutton = new JButton("펜션 둘러보기");
 		guidebutton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new Guide();
+				new Guide(userId);
 				frame.dispose();
 			}
 		});
@@ -114,20 +141,14 @@ public class MainPage {
 		boradbutton.setBackground(Color.WHITE);
 		boradbutton.setBounds(496, 10, 95, 23);
 		frame.getContentPane().add(boradbutton);
+		
+	}
+	
+	//생성자
+	public MainPage() {
+		this(null);	
 	}
 
-	//메인
-	public static void main(String[] args) {
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					try {
-						MainPage window = new MainPage();
-						window.frame.setVisible(true);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			});
-			}
 
 }
+

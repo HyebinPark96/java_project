@@ -7,7 +7,8 @@ import java.sql.ResultSet;
 
 // DB연동의 기능의 클래스 
 public class LoginMgr {
-
+	
+	
 	// 매번 정보 가져오는 과부하 안걸리게 pool에 만든 인스턴스를 담기
 	private DBConnectionMgr pool;
 	
@@ -16,11 +17,12 @@ public class LoginMgr {
 	}
 
 	// SELECT : ID,비번 매개변수로 받아서 DB와 일치하는지 학인 후 로그인
-	public boolean loginChk(String id, String pwd) {
+	public String loginChk(String id, String pwd) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		String sql = null;
+		
 		boolean flag = false; // flag의 불리언값에 따라 결과 나뉨
 		
 		try {
@@ -37,12 +39,14 @@ public class LoginMgr {
 			
 			if(rs.next())
 				flag = true;  // 값이 있다면 true 반환
+				return rs.getString(1); 
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			pool.freeConnection(con, pstmt, rs);
 		}
-		return flag;
+		return null;
 	}
 	
 	// SELECT : 회원가입시 아이디 중복확인 
@@ -51,6 +55,7 @@ public class LoginMgr {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		String sql = null;
+		
 		boolean flagForIdDup = false; // flagForIdDup의 불리언값에 따라 결과 나뉨
 		
 		try {
@@ -66,9 +71,10 @@ public class LoginMgr {
 			
 			// executeQuery : select 실행문
 			rs = pstmt.executeQuery(); 
-			
+
 			if(rs.next())
 				flagForIdDup = true; // 값이 있다면 true 반환
+				
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -76,6 +82,9 @@ public class LoginMgr {
 		}
 		return flagForIdDup; 
 	} 
+	
+
+	
 	
 	
 	// INSERT : 회원가입완료 -> DB에 입력
