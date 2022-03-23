@@ -1,4 +1,4 @@
-/*-- 로그인매니저 | 마지막 수정날짜: 2022-03-22 | 마지막 수정인: 김서하--*/
+/*-- 로그인매니저 | 마지막 수정날짜: 2022-03-23 | 마지막 수정인: 김서하--*/
 package javaproject;
 
 import java.sql.Connection;
@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 public class LoginMgr {
 	
 	private String logSucId;
+	private int mode;
 	
 	
 	// 매번 정보 가져오는 과부하 안걸리게 pool에 만든 인스턴스를 담기
@@ -52,6 +53,35 @@ public class LoginMgr {
 		}
 		return logSucId;
 	}
+	
+	// SELECT : ID 받아와서 관리자 여부 확인
+	public int modeChk(String id) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		
+		try {
+			con = pool.getConnection();
+			
+			//쿼리문
+			sql = "SELECT mode FROM user WHERE id = ?";
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setString(1, id); // 1 : 첫번째 물음표
+			// executeQuery : select 실행문
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				mode = rs.getInt(1); // 가져오는 첫번째 열 (모드값)를 mode의 값으로 대입
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return mode;
+	}	
 	
 	// SELECT : 회원가입시 아이디 중복확인 
 	public boolean idChk(String id) {

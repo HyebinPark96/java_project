@@ -6,30 +6,42 @@ import java.awt.Checkbox;
 import java.awt.CheckboxGroup;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Label;
 import java.awt.Panel;
 import java.awt.TextField;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.image.BufferedImage;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 public class PaymentFrame {
-	private JFrame jf; 
+	private JFrame jf;
+
 	private int check;
 	private int totalCost;
+
+	
+	
 	
 	// 생성자
 	public PaymentFrame() {
@@ -38,8 +50,13 @@ public class PaymentFrame {
 	
 	// 생성자
 	public PaymentFrame(String userId) {
+		// 폰트 
 		Font f1 = new Font("맑은 고딕", Font.BOLD, 40); //타이틀 폰트
 		Font f2 = new Font("맑은 고딕", Font.BOLD, 12); //버튼 폰트
+		Font f3 = new Font("맑은 고딕", Font.PLAIN, 12); //텍스트 폰트
+		
+		
+		
 		Panel p1, p2, p3, p4;
 		Checkbox agmCb[]; // 약관 동의 체크박스들 배열원소로 담기
 
@@ -56,41 +73,44 @@ public class PaymentFrame {
 
 		Label p_costLb; // 결제금액
 		JTextField p_costTf; // 전체 결제금액 텍스트필드
-		Label krwLb = new Label("원");
+		Label krwLb;
 
 		Button p_btn; // 결제 버튼
 
+		
+		
+		
 		jf = new JFrame("결제하기");
-		
-		Color c = new Color(255, 255, 255);
-		Container con = jf.getContentPane();
-		con.setBackground(c);
-		
+		jf.setTitle(userId + "님의 결제가 진행 중입니다.");
+		jf.setSize(800, 600);
+		jf.setLocationRelativeTo(null); // 창 가운데로
+		jf.setLayout(null); // 마음대로 지정가능하게 해줌
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jf.setSize(300, 300);
-
-		// 레이아웃 지정 : null값
-		jf.setLayout(null);
-
+		jf.setVisible(true);
+		
+		
 		title = new Label("결제하기");
 		title.setFont(f1);
 		
-
 		agmLb = new Label[3];
 		agmLb[0] = new Label("전자금융거래 이용약관");
 		agmLb[1] = new Label("개인정보 제공 및 위탁안내");
 		agmLb[2] = new Label("개인정보 수집 및 이용안내");
+		
+		for (int i = 0; i < agmLb.length; i++) {
+			agmLb[i].setFont(f3);
+		}
+		
+		
 
 		// 체크박스 배열 크기 지정
 		agmCb = new Checkbox[3];
 
 		// 체크박스 배열 객체 생성
-		agmCb[0] = new Checkbox("동의");
-		agmCb[1] = new Checkbox("동의");
-		agmCb[2] = new Checkbox("동의");
-		
-		
 		for (int i = 0; i < agmCb.length; i++) {
+			agmCb[i] = new Checkbox("동의");
+			agmCb[i].setFont(f2);
+			
 			agmCb[i].addItemListener(new ItemListener() {
 				@Override
 				public void itemStateChanged(ItemEvent e) {
@@ -104,7 +124,7 @@ public class PaymentFrame {
 				}
 			});
 		}
-
+		
 		title.setBounds(220, 10, 200, 50);
 		jf.add(title);
 
@@ -137,6 +157,7 @@ public class PaymentFrame {
 				cardBtn[i] = new JRadioButton(cardName[i], false);
 			}
 			cardBtn[i].setBackground(Color.WHITE);
+			cardBtn[i].setFont(f2);
 		}
 
 		cardBtn[0].setBounds(80, 180, 70, 20);
@@ -158,6 +179,7 @@ public class PaymentFrame {
 		}
 
 		p_costLb = new Label("결제금액");
+		p_costLb.setFont(f2);
 		p_costTf = new JTextField(10);
 		
 		PaymentMgr mgr = new PaymentMgr();
@@ -170,11 +192,14 @@ public class PaymentFrame {
 		p_costTf.setBounds(270, 300, 80, 30);
 		jf.add(p_costTf);
 
+		krwLb = new Label("원");
 		krwLb.setForeground(Color.RED);
-		krwLb.setBounds(350, 300, 20, 30);
+		krwLb.setBounds(355, 300, 20, 30);
+		krwLb.setFont(f3);
 		jf.add(krwLb);
 
 		p_btn = new Button("결제");
+		p_btn.setFont(f2);
 		p_btn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -192,7 +217,7 @@ public class PaymentFrame {
 			}
 		});
 		
-		p_btn.setBounds(270, 350, 80, 20);
+		p_btn.setBounds(270, 350, 200, 50);
 		p_btn.setBackground(Color.BLACK);
 		p_btn.setForeground(Color.WHITE);
 		jf.add(p_btn);
@@ -205,7 +230,8 @@ public class PaymentFrame {
 		jf.validate();
 	}
 
-
+	
+	
 	public static void main(String[] args) {
 		// 생성자 호출
 		new PaymentFrame();

@@ -21,14 +21,14 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-public class UpdateUser {
+public class UpdateUser2 {
 
 	LoginMgr mgr = new LoginMgr();
 	JFrame jf = new JFrame();
 	
 	private JPanel p1;
 	private JLabel titleLb, pwdLb, newPwdLb, idLb, nameLb, emailLb, birthdayLb, genderLb, phoneLb; 
-	private JButton updateBtn, listBtn, saveBtn, homeBtn;
+	private JButton updateBtn, listBtn, saveBtn, homeBtn, changePwdBtn, changeEmailBtn, changePhoneBtn;
 	private JTextField idTf, nameTf, emailTf, birthdayTf, phoneTf, genderTf;
 	private JPasswordField pwdTf, newPwdTf;
 	
@@ -47,7 +47,7 @@ public class UpdateUser {
 	}
 
 	// 생성자 (매개변수)
-	public UpdateUser(String userId) {
+	public UpdateUser2(String userId) {
 		
 		// 기본 셋팅
 		jf.setSize(1200,800);
@@ -127,29 +127,48 @@ public class UpdateUser {
 		idTf.setEditable(false);
 		p1.add(idTf);
 		
-		//"비밀번호" 라벨
-		pwdLb = new JLabel("비밀번호");
+		//"새 비밀번호" 라벨
+		pwdLb = new JLabel("새 비밀번호");
 		pwdLb.setFont(f3);
-		pwdLb.setBounds(450, 250, 70, 20);
+		pwdLb.setBounds(450, 250, 90, 20);
 		p1.add(pwdLb);
-		//"비밀번호" 텍스트필드
+		//"새 비밀번호" 텍스트필드
 		pwdTf = new JPasswordField();
 		pwdTf.setColumns(10);
 		pwdTf.setBounds(450, 270, 240, 20);
 		pwdTf.setEchoChar('●');
+		pwdTf.setEditable(false);
 		p1.add(pwdTf);		
 		
-		//"새 비밀번호" 라벨
-		newPwdLb = new JLabel("새 비밀번호");
+		//비밀번호 수정 버튼(새 비밀번호 텍스트필드 활성화)
+		changePwdBtn = new JButton("비밀번호 변경하기");
+		changePwdBtn.setBounds(700, 270, 150, 20);
+		changePwdBtn.setFont(f2);
+		changePwdBtn.setForeground(Color.white);
+		changePwdBtn.setBackground(Color.gray);
+		p1.add(changePwdBtn);
+		changePwdBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				pwdTf.setEditable(true);
+				newPwdTf.setEditable(true);
+			}
+		});
+		
+		//"새 비밀번호 확인" 라벨
+		newPwdLb = new JLabel("새 비밀번호 확인");
 		newPwdLb.setFont(f3);
-		newPwdLb.setBounds(450, 300, 70, 20);
+		newPwdLb.setBounds(450, 300, 110, 20);
 		p1.add(newPwdLb);
-		//"새 비밀번호" 텍스트필드
+		//"새 비밀번호 확인" 텍스트필드
 		newPwdTf = new JPasswordField();
 		newPwdTf.setColumns(10);
 		newPwdTf.setBounds(450, 320, 240, 20);
 		newPwdTf.setEchoChar('●');
+		newPwdTf.setEditable(false);
 		p1.add(newPwdTf);	
+		
 		
 		//"이름" 라벨
 		nameLb = new JLabel("이름");
@@ -196,7 +215,23 @@ public class UpdateUser {
 		emailTf = new JTextField();
 		emailTf.setColumns(10);
 		emailTf.setBounds(450, 520, 240, 20);
-		p1.add(emailTf);		
+		emailTf.setEditable(false);
+		p1.add(emailTf);
+		//이메일 수정 버튼(새 비밀번호 텍스트필드 활성화)
+		changeEmailBtn = new JButton("이메일 변경하기");
+		changeEmailBtn.setBounds(700, 520, 150, 20);
+		changeEmailBtn.setFont(f2);
+		changeEmailBtn.setForeground(Color.white);
+		changeEmailBtn.setBackground(Color.gray);
+		p1.add(changeEmailBtn);
+		changeEmailBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				emailTf.setEditable(true);
+			}
+		});
+		
 		
 		//"연락처" 라벨
 		phoneLb = new JLabel("연락처");
@@ -207,7 +242,22 @@ public class UpdateUser {
 		phoneTf = new JTextField();
 		phoneTf.setColumns(10);
 		phoneTf.setBounds(450, 570, 240, 20);
-		p1.add(phoneTf);		
+		phoneTf.setEditable(false);
+		p1.add(phoneTf);	
+		//연락처 수정 버튼(새 비밀번호 텍스트필드 활성화)
+		changePhoneBtn = new JButton("연락처 변경하기");
+		changePhoneBtn.setBounds(700, 570, 150, 20);
+		changePhoneBtn.setFont(f2);
+		changePhoneBtn.setForeground(Color.white);
+		changePhoneBtn.setBackground(Color.gray);
+		p1.add(changePhoneBtn);
+		changePhoneBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				phoneTf.setEditable(true);
+			}
+		});
 		
 		//"저장" 버튼
 		saveBtn = new JButton("저장");
@@ -303,7 +353,7 @@ public class UpdateUser {
 }
 
 	// 생성자
-	public UpdateUser() {
+	public UpdateUser2() {
 		this(null);
 	}
 

@@ -1,4 +1,4 @@
-/*-- 관리자페이지 예약관리 | 마지막 수정날짜: 2022-03-22 | 마지막 수정인: 김서하--*/
+/*-- 관리자페이지 예약관리 | 마지막 수정날짜: 2022-03-23 | 마지막 수정인: 김서하--*/
 
 package javaproject;
 
@@ -45,7 +45,8 @@ public class ReservationAdmin {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					new ReservationAdmin();
+					ReservationAdmin reservationAdmin = new ReservationAdmin();
+					reservationAdmin.jf.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -53,9 +54,9 @@ public class ReservationAdmin {
 		});
 	}
 
-	// 생성자
+	// 생성자 (매개변수)
 	@SuppressWarnings({ "serial", "unchecked" })
-	public ReservationAdmin() {
+	public ReservationAdmin(String userId) {
 		// 기본 셋팅
 		jf.setSize(1200,800);
 		jf.setVisible(true);
@@ -80,7 +81,7 @@ public class ReservationAdmin {
 		Font f2 = new Font("맑은 고딕", Font.BOLD, 12); //버튼 폰트
 		Font f3 = new Font("맑은 고딕", Font.BOLD, 12); //라벨 폰트
 		
-		jf.setTitle("관리자페이지");
+		jf.setTitle("관리자페이지("+userId+")");
 		p1 = new JPanel();
 		
 		model = new DefaultTableModel() {
@@ -216,5 +217,9 @@ public class ReservationAdmin {
 		// 새로고침
 		jf.validate();
 	}
-
+	
+	// 생성자
+	public ReservationAdmin() {
+		this(null);
+	}
 }

@@ -1,3 +1,4 @@
+/*-- 메인화면 | 마지막 수정날짜: 2022-03-23 | 마지막 수정인: 김서하--*/
 package javaproject;
 
 import java.awt.Color;
@@ -17,7 +18,9 @@ import javax.swing.JOptionPane;
 // // 0322 박혜빈 수정 : 1. 게시판 삭제
 public class MainPage {
 	
+	LoginMgr mgr = new LoginMgr();
 	private JFrame frame;
+	
 	
 	//메인
 	public static void main(String[] args) {
@@ -110,6 +113,7 @@ public class MainPage {
 					System.out.println(userId + " : 아이디 못 불러옴");	
 				} else { // 회원 (userId)
 					new UpdateUser(userId);
+					frame.dispose();
 					System.out.println(userId + "님이 마이페이지 버튼을 클릭했습니다.");
 				}
 			}
@@ -118,6 +122,7 @@ public class MainPage {
 		myPageBtn.setBackground(Color.WHITE);
 		myPageBtn.setBounds(796, 10, 95, 23);
 		frame.getContentPane().add(myPageBtn);
+		
 		
 		//예약버튼 - 클릭시 예약 페이지로 이동
 		JButton reservationBtn = new JButton("예약");
@@ -151,6 +156,26 @@ public class MainPage {
 		guideBtn.setBackground(Color.WHITE);
 		guideBtn.setBounds(244, 10, 136, 23);
 		frame.getContentPane().add(guideBtn);
+		
+		//관리자페이지 버튼
+		JButton adminBtn = new JButton("관리자");
+		adminBtn.setFont(new Font("맑은 고딕", Font.BOLD, 12));
+		adminBtn.setBackground(Color.WHITE);
+		adminBtn.setBounds(893, 10, 95, 23);
+		adminBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new ReservationAdmin(userId);
+				frame.dispose();
+			}
+		});
+		
+		//로그인id mode값으로 관리자버튼 보이기 선택
+		if(mgr.modeChk(userId)==1) {
+			System.out.println("mode:"+mgr.modeChk(userId)+" 관리자 로그인");
+			frame.getContentPane().add(adminBtn);
+		}else if (mgr.modeChk(userId)==0) {
+			System.out.println("mode:"+mgr.modeChk(userId)+" 사용자 로그인");
+		}
 	}
 	
 	//생성자
