@@ -178,7 +178,7 @@ public class ReservationAdmin {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int row = table.getSelectedRow();
-				int column = table.getSelectedColumn();
+				int column = 7;
 
 				String res_no = (String)table.getValueAt(row, column);
 				res_noTf.setText(res_no);

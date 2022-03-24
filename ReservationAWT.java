@@ -392,7 +392,9 @@ public class ReservationAWT{
 					}
 					
 					if(ReservationAWT.this.r_status == "결제 전") {
+						System.out.println("결제전이긴 하지만 결제창 왜 안뜨니");
 						PaymentFrame cpf = new PaymentFrame(userId);
+						cpf.setVisible(true);
 						jf.dispose();
 					}
 					
