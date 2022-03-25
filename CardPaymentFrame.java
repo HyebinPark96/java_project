@@ -14,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -32,6 +34,12 @@ public class CardPaymentFrame extends JFrame {
 	private Image bkImg = new ImageIcon("javaproject/images/background.png").getImage();
 	PaymentMgr mgr = new PaymentMgr();
 	private String userId;
+	private JTextField c_numTf1, c_numTf2, c_numTf3, c_numTf4; // 카드번호 16자리 
+	private JTextField yyTf, mmTf; // 유효기간 년월
+	private JRadioButton pcRBtn, ccRBtn; // 개인, 법인 구분 
+	private JTextField c_pwdTf; // 카드 비밀번호
+	private JTextField idNumTf1, idNumTf2; // 주민등록번호
+	private JCheckBox chk1; // 전체동의 체크박스
 
 	// 그리기 함수
 	public void paint(Graphics g) {
@@ -60,8 +68,6 @@ public class CardPaymentFrame extends JFrame {
 		//커서
 		Cursor cursor = new Cursor(Cursor.HAND_CURSOR); // 클릭 커서 모양
 		
-		
-	
 
 		// 타이틀 라벨
 		JLabel title = new JLabel("결제하기");
@@ -72,7 +78,6 @@ public class CardPaymentFrame extends JFrame {
 		title.setBackground(Color.WHITE);
 		title.setOpaque(true);
 		
-
 
 		// 카드번호 라벨
 		JLabel c_numLb = new JLabel("카드번호");
@@ -127,10 +132,10 @@ public class CardPaymentFrame extends JFrame {
 
 		
 		// 카드번호 텍스트필드
-		JTextField c_numTf1 = new JTextField(); 
-		JTextField c_numTf2 = new JTextField(); 
-		JTextField c_numTf3 = new JTextField(); 
-		JTextField c_numTf4 = new JTextField(); 
+		c_numTf1 = new JTextField(); 
+		c_numTf2 = new JTextField(); 
+		c_numTf3 = new JTextField(); 
+		c_numTf4 = new JTextField(); 
 		add(c_numTf1);
 		add(c_numTf2);
 		add(c_numTf3);
@@ -138,22 +143,160 @@ public class CardPaymentFrame extends JFrame {
 		c_numTf1.setBounds(230, 70, 40, 20);
 		c_numTf2.setBounds(280, 70, 40, 20);
 		c_numTf3.setBounds(330, 70, 40, 20);
-		c_numTf4.setBounds(380, 70, 40, 20);		
+		c_numTf4.setBounds(380, 70, 40, 20);	
+		
+		c_numTf1.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) { // 누른 키를 떼는 순간 
+				if(c_numTf1.getText().trim().length()>4) {
+					JOptionPane.showMessageDialog(null, "네 자리로 작성해주세요.");
+					c_numTf1.setText(""); // 초기화
+				} else if (c_numTf1.getText().trim().length()==4) {
+					c_numTf2.requestFocus(); // 포커스 이동
+				}
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				
+			}
+		});
+		
+		c_numTf2.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) { // 누른 키를 떼는 순간 
+				if(c_numTf2.getText().trim().length()>4) {
+					JOptionPane.showMessageDialog(null, "네 자리로 작성해주세요.");
+					c_numTf2.setText(""); // 초기화
+				} else if (c_numTf2.getText().trim().length()==4) {
+					c_numTf3.requestFocus(); // 포커스 이동
+				}
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				
+			}
+		});
+		
+		c_numTf3.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) { // 누른 키를 떼는 순간 
+				if(c_numTf3.getText().trim().length()>4) {
+					JOptionPane.showMessageDialog(null, "네 자리로 작성해주세요.");
+					c_numTf3.setText(""); // 초기화
+				} else if (c_numTf3.getText().trim().length()==4) {
+					c_numTf4.requestFocus(); // 포커스 이동
+				}
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				
+			}
+		});
+		
+		c_numTf4.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) { // 누른 키를 떼는 순간 
+				if(c_numTf4.getText().trim().length()>4) {
+					JOptionPane.showMessageDialog(null, "네 자리로 작성해주세요.");
+					c_numTf4.setText(""); // 초기화
+				} else if (c_numTf4.getText().trim().length()==4) {
+					mmTf.requestFocus(); // 포커스 이동
+				}
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				
+			}
+		});
 		
 		
 		//카드 유효기간 "월" 텍스트필드
-		JTextField mmTf = new JTextField();
+		mmTf = new JTextField();
 		add(mmTf);
 		mmTf.setBounds(230, 95, 30, 20);
+		mmTf.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) { // 누른 키를 떼는 순간 
+				if(mmTf.getText().trim().length()>2) { // 두 자리 넘으면
+					JOptionPane.showMessageDialog(null, "두 자리로 작성해주세요.");
+					mmTf.setText(""); // 초기화
+				} else if (mmTf.getText().trim().length()==2) { // 두 자리 일 때 
+					yyTf.requestFocus(); // 포커스 이동
+				}
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				
+			}
+		});
+		
 		
 		//카드 유효기간 "년" 텍스트필드
-		JTextField yyTf = new JTextField();
+		yyTf = new JTextField();
 		add(yyTf);
 		yyTf.setBounds(280, 95, 30, 20);
+		yyTf.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) { // 누른 키를 떼는 순간 
+				if(yyTf.getText().trim().length()>2) {
+					JOptionPane.showMessageDialog(null, "두 자리로 작성해주세요.");
+					yyTf.setText(""); // 초기화
+				} else if (yyTf.getText().trim().length()==2) {
+					pcRBtn.requestFocus(); // 포커스 이동
+				}
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				
+			}
+		});
+
 		
 		// 카드구분 radio
-		JRadioButton pcRBtn = new JRadioButton("개인카드", true);
-		JRadioButton ccRBtn = new JRadioButton("법인카드");
+		pcRBtn = new JRadioButton("개인카드", true);
+		ccRBtn = new JRadioButton("법인카드");
 		ButtonGroup group = new ButtonGroup();
 		add(pcRBtn);
 		add(ccRBtn);
@@ -165,9 +308,31 @@ public class CardPaymentFrame extends JFrame {
 		ccRBtn.setBounds(320, 120, 80, 15);
 
 		// 카드비밀번호 텍스트필드
-		JTextField c_pwdTf = new JTextField();
+		c_pwdTf = new JTextField();
 		add(c_pwdTf);
 		c_pwdTf.setBounds(230, 145, 30, 20);
+		c_pwdTf.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) { // 누른 키를 떼는 순간 
+				if(c_pwdTf.getText().trim().length()>2) {
+					JOptionPane.showMessageDialog(null, "두 자리로 작성해주세요.");
+					c_pwdTf.setText(""); // 초기화
+				} else if (c_pwdTf.getText().trim().length()==2) {
+					idNumTf1.requestFocus(); // 포커스 이동
+				}
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				
+			}
+		});
 
 //		// 카드비밀번호 라벨2
 		JLabel c_pwdLb2 = new JLabel("X X (앞 두자리)");
@@ -178,14 +343,60 @@ public class CardPaymentFrame extends JFrame {
 		c_pwdLb2.setFont(f3);
 
 		// 주민등록번호 텍스트필드
-		JTextField idnumTf1 = new JTextField();
-		JTextField idnumTf2 = new JTextField();
-		add(idnumTf1);
-		add(idnumTf2);
-		idnumTf1.setBounds(230, 170, 70, 20);
-		idnumTf2.setBounds(310, 170, 70, 20);
+		idNumTf1 = new JTextField();
+		idNumTf2 = new JTextField();
+		add(idNumTf1);
+		add(idNumTf2);
+		idNumTf1.setBounds(230, 170, 70, 20);
+		idNumTf2.setBounds(310, 170, 70, 20);
 		
-		JCheckBox chk1 = new JCheckBox("전체 동의합니다.");
+		idNumTf1.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) { // 누른 키를 떼는 순간 
+				if(idNumTf1.getText().trim().length()>6) {
+					JOptionPane.showMessageDialog(null, "주민번호 앞자리는 여섯자리입니다.");
+					idNumTf1.setText(""); // 초기화
+				} else if (idNumTf1.getText().trim().length()==6) {
+					idNumTf2.requestFocus(); // 포커스 이동
+				}
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				
+			}
+		});
+		
+		idNumTf2.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) { // 누른 키를 떼는 순간 
+				if(idNumTf2.getText().trim().length()>7) {
+					JOptionPane.showMessageDialog(null, "주민번호 뒷자리는 일곱자리입니다.");
+					idNumTf2.setText(""); // 초기화
+				} else if (idNumTf2.getText().trim().length()==7) {
+					chk1.requestFocus();
+				}
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				
+			}
+		});
+		
+		chk1 = new JCheckBox("전체 동의합니다.");
 		add(chk1);
 		chk1.setFont(f3);
 		chk1.addItemListener(null);
@@ -299,22 +510,22 @@ public class CardPaymentFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 			if(mmTf.getText().isEmpty() || yyTf.getText().isEmpty()) {
 				JOptionPane.showMessageDialog(null, "카드 유효기간을 입력하세요.");
-			}else if(c_pwdTf.getText().isEmpty()) {
+			} else if(c_pwdTf.getText().isEmpty()) {
 				JOptionPane.showMessageDialog(null, "카드 비밀번호를 입력하세요.");
-			}else if(idnumTf1.getText().isEmpty() || idnumTf2.getText().isEmpty() ) {
+			} else if(idNumTf1.getText().isEmpty() || idNumTf2.getText().isEmpty() ) {
 				JOptionPane.showMessageDialog(null, "주민등록 번호를 입력하세요.");
-			}else if(c_numTf1.getText().isEmpty() || c_numTf2.getText().isEmpty() || c_numTf3.getText().isEmpty() || c_numTf4.getText().isEmpty()) {
+			} else if(c_numTf1.getText().isEmpty() || c_numTf2.getText().isEmpty() || c_numTf3.getText().isEmpty() || c_numTf4.getText().isEmpty()) {
 				JOptionPane.showMessageDialog(null, "카드 번호를 입력하세요.");
-			}else if (!chk2.isSelected()||!chk3.isSelected()||!chk4.isSelected()||!chk5.isSelected()||!chk6.isSelected()) { 
+			} else if (!chk2.isSelected()||!chk3.isSelected()||!chk4.isSelected()||!chk5.isSelected()||!chk6.isSelected()) { 
 				JOptionPane.showMessageDialog(null, "모든 약관에 동의해주세요.");
-			}else {
+			} else {
 				System.out.println("결제완료!");
 				PaymentMgr mgr = new PaymentMgr();
 				mgr.updateStatus(userId);
 				System.out.println(userId + "님 결제상태가 결제 전에서 결제완료로 변경되었습니다.");
 				JOptionPane.showMessageDialog(null, "결제 성공하였습니다. 예약해주셔서 감사합니다.");
 				dispose();
-			}
+				}
 			}
 		});
 		
@@ -340,7 +551,6 @@ public class CardPaymentFrame extends JFrame {
 		setLocationRelativeTo(null);// 창이 가운데 나오게
 		setLayout(null);// 레이아웃을 내맘대로 설정가능하게 해줌.
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// JFrame이 정상적으로 종료되게
-		
 
 
 

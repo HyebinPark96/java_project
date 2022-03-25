@@ -235,7 +235,7 @@ public class ReservationUser {
 		/*기능 구현*/
 		
 		// id값으로 내 예약정보불러오기
-		if (mgr.resInfo(userId).getRes_no()==0) {
+		if (mgr.resInfo(userId).getRes_no()==null) {
 			JOptionPane.showMessageDialog(null, "예약내역이 없습니다.");
 		}else {
 			res_noTf.setText(""+mgr.resInfo(userId).getRes_no());
@@ -273,7 +273,7 @@ public class ReservationUser {
 				} else if (!pwdTf.getText().equals("")) { //비번은썼음
 					if(mgr.loginChk(idTf.getText().trim(), pwdTf.getText().trim()).length()>0/* true */) { // 비밀번호와 아이디 체크
 						JOptionPane.showMessageDialog(null, "예약취소를 하겠습니까?");
-					}else {
+					}else if (!(mgr.loginChk(idTf.getText().trim(), pwdTf.getText().trim()).length()>0)/* true */) {
 						JOptionPane.showMessageDialog(null, "비밀번호가 일치하지 않습니다.");
 						pwdTf.setText("");
 					}

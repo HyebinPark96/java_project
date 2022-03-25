@@ -41,19 +41,18 @@ public class AdminMgr {
 			while (rs.next()) {
 				Vector in = new Vector<String>(); // 1개의 레코드 저장하는 벡터 생성
 
-				String res_no = rs.getString(1);
-				String id = rs.getString(2);
-				String r_room = rs.getString(3);
-				String startdate = rs.getString(4);
-				String enddate = rs.getString(5);
-				String headcount = rs.getString(6);
-				String r_status = rs.getString(7);
-				String p_cost = rs.getString(8);
+				String id = rs.getString(1);
+				String r_room = rs.getString(2);
+				String startdate = rs.getString(3);
+				String enddate = rs.getString(4);
+				String headcount = rs.getString(5);
+				String r_status = rs.getString(6);
+				String p_cost = rs.getString(7);
+				String res_no = rs.getString(8);
 
 
 				// 벡터에 각각의 값 추가
 
-				in.add(res_no);
 				in.add(id);
 				in.add(r_room);
 				in.add(startdate);
@@ -61,6 +60,7 @@ public class AdminMgr {
 				in.add(headcount);
 				in.add(r_status);
 				in.add(p_cost);
+				in.add(res_no);
 						
 				// 전체 데이터를 저장하는 벡터에 in(1명의 데이터 저장) 벡터 추가
 				data.add(in);
@@ -108,5 +108,65 @@ public class AdminMgr {
 			pool.freeConnection(con, pstmt);
 		}
 	}
+	
+	//기존 예약 체크
+	public boolean resChk(String r_room, String startdate) {
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		boolean flagForResChk = false;
 
-}
+		try {
+			con = pool.getConnection();
+			// 쿼리문
+			sql = "SELECT r_room, startdate FROM reservation WHERE r_room =? and startdate =?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1,r_room);
+			pstmt.setString(2,startdate);
+			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				flagForResChk = true;
+			}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}finally {
+				pool.freeConnection(con, pstmt, rs);
+			}
+			return flagForResChk;
+		}	
+	
+	// 새 예약으로 업데이트
+	public boolean resUpdt(ReservationBean bean) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = null;
+		boolean flagForResUpdt = false;
+		try {
+			con = pool.getConnection();
+			sql = "UPDATE reservation SET r_room =?, startdate =?, enddate =?, headcount =? "
+					+ "WHERE res_no = ?";//values (데이터값들)
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, bean.getR_room());//1은 첫번째 ?를 의미
+			pstmt.setString(2, bean.getStartdate());//2은 두번째 ?를 의미
+			pstmt.setString(3, bean.getEnddate());//3은 세번째 ?를 의미
+			pstmt.setString(4, bean.getHeadcount());//4은 네번째 ?를 의미
+			pstmt.setString(5, bean.getRes_no());
+			//적용된 레코드 개수 : 에러 및 처리 : 0, 정상적인 처리 : 1 
+			int cnt = pstmt.executeUpdate();
+			if(cnt==1) flagForResUpdt = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+		return flagForResUpdt;
+	}
+	
+	}
+
+	
+

@@ -230,8 +230,8 @@ public class LoginMgr {
 				rs = pstmt.executeQuery();
 				
 				if(rs.next()) {
-					bean.setRes_no(rs.getInt("res_no"));
-					bean.setR_room(rs.getInt("r_room"));
+					bean.setRes_no(rs.getString("res_no"));
+					bean.setR_room(rs.getString("r_room"));
 					bean.setStartdate(rs.getString("startdate"));
 					bean.setEnddate(rs.getString("enddate"));
 					bean.setR_status(rs.getString("r_status"));

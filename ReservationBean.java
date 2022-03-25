@@ -9,13 +9,13 @@ package javaproject;
 public class ReservationBean/* 테이블명+Bean */ {
 	// 컬럼별 private 변수 선언
 	private String id;
-	private int r_room;
+	private String r_room;
 	private String startdate;
 	private String enddate;
-	private int headcount;
+	private String headcount;
 	private String r_status;
 	private int p_cost;
-	private int res_no;
+	private String res_no;
 
 	// 디폴트 생성자
 	public ReservationBean() {
@@ -23,9 +23,10 @@ public class ReservationBean/* 테이블명+Bean */ {
 	}
 
 	// 매개변수 생성자
-	public ReservationBean(String id, int r_room, String startdate,
-			String enddate, int headcount, String r_status,
-			int p_cost, int res_no) {
+	public ReservationBean(String id, String r_room, String startdate,
+			String enddate, String headcount, String r_status,
+			int p_cost,String res_no) {
+		
 		this.id = id;
 		this.r_room = r_room;
 		this.startdate = startdate;
@@ -37,6 +38,8 @@ public class ReservationBean/* 테이블명+Bean */ {
 	}
 
 	// getter & setter 생성
+	
+	
 	public String getId() {
 		return id;
 	}
@@ -45,11 +48,11 @@ public class ReservationBean/* 테이블명+Bean */ {
 		this.id = id;
 	}
 
-	public int getR_room() {
+	public String getR_room() {
 		return r_room;
 	}
 
-	public void setR_room(int r_room) {
+	public void setR_room(String r_room) {
 		this.r_room = r_room;
 	}
 
@@ -69,11 +72,11 @@ public class ReservationBean/* 테이블명+Bean */ {
 		this.enddate = enddate;
 	}
 
-	public int getHeadcount() {
+	public String getHeadcount() {
 		return headcount;
 	}
 
-	public void setHeadcount(int headcount) {
+	public void setHeadcount(String headcount) {
 		this.headcount = headcount;
 	}
 
@@ -92,12 +95,11 @@ public class ReservationBean/* 테이블명+Bean */ {
 	public void setP_cost(int p_cost) {
 		this.p_cost = p_cost;
 	}
-
-	public int getRes_no() {
+	public String getRes_no() {
 		return res_no;
 	}
 
-	public void setRes_no(int res_no) {
+	public void setRes_no(String res_no) {
 		this.res_no = res_no;
 	}
 

@@ -530,7 +530,7 @@ public class PaymentFrame extends JFrame implements ActionListener {
 		setLocationRelativeTo(null);// 창이 가운데 나오게
 		setLayout(null);// 레이아웃을 내맘대로 설정가능하게 해줌.
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// JFrame이 정상적으로 종료되게
-
+		
 		validate();
 		repaint();
 	}

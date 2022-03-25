@@ -34,6 +34,7 @@ import javaproject.CalendarFunc;
 public class ReservationAWT{
 	private JFrame jf;
 	private String r_status;
+	private int check; // insert 되면 1, delete 되면 0 셋팅됨 -> 1이면 결제창 열기
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -201,8 +202,6 @@ public class ReservationAWT{
 		int rsSDate; // DB와 연동될 시작날짜 최종값 (YYYYMMDD)
 		int rsEDate; // DB와 연동될 종료날짜 최종값 (YYYYMMDD)
 		int rsRoom; // DB와 연동될 선택룸 최종값 (101, 102, 201, 202 중 하나)
-		
-		String r_status;
 		int p_cost;
 		
 		ReservationMgr rsMgr = new ReservationMgr();
@@ -432,6 +431,7 @@ public class ReservationAWT{
 								}
 								
 								rsMgr.deleteDate(rsRoom, sqlDate, sqlDate);	
+								check = 0;
 							}
 							System.out.println("중복되는 일정이 있으므로 선택하신 일정이 모두 예약취소 되었습니다. 다시 선택해주십시오.");
 							JOptionPane.showMessageDialog(null, "중복되는 일정이 있으므로 선택하신 일정이 모두 예약취소 되었습니다. 다시 선택해주십시오.");
@@ -442,7 +442,7 @@ public class ReservationAWT{
 							// DB와 중복되지 않는 날짜 선택했다면 false 반환
 							
 							// 결제 전 단계인 예약파트에서 결제하기 버튼 누르면 무조건 결제 전 상태 셋팅됨
-							ReservationAWT.this.r_status = "결제 전";
+							r_status = "결제 전";
 							
 							// 위아래버튼 클릭 안했다면 headcount = 1; 기본셋팅, 클릭했으면 값 설정되어 있음 
 							// 그러므로 p_cost만 셋팅하면 된다.
@@ -451,8 +451,9 @@ public class ReservationAWT{
 							
 							
 							// DB INSERT 
-							rsMgr.InsertDate(userId, rsRoom, sqlDate, sqlDate, headcount, ReservationAWT.this.r_status, p_cost);
-		
+							rsMgr.InsertDate(userId, rsRoom, sqlDate, sqlDate, headcount, r_status, p_cost);
+							check = 1;
+							
 							// INSERT 완료 후 sqlDate 1일씩 증가시켜서 예약 마지막날까지 반복문 돌게 한다.
 							cal.add(Calendar.DATE, 1); // 1일 증가 시키기
 							
@@ -471,7 +472,7 @@ public class ReservationAWT{
 						}
 					}
 					
-					if(ReservationAWT.this.r_status == "결제 전") {
+					if(check==1) {
 						PaymentFrame cpf = new PaymentFrame(userId);
 						cpf.setVisible(true);
 						jf.dispose();
