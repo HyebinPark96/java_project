@@ -9,6 +9,7 @@ public class ReservationMgr {
 	
 	private int r_capacity;
 	private int p_cost;
+	private String r_status;
 
 	// 매번 정보 가져오는 과부하 안걸리게 pool에 만든 인스턴스를 담기
 	private DBConnectionMgr pool;
@@ -236,8 +237,6 @@ public class ReservationMgr {
 			}
 			return p_cost;
 		}
-			
-		
 		
 		
 }

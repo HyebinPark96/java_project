@@ -46,6 +46,7 @@ public class MainPage {
 		frame.getContentPane().setBackground(Color.WHITE);
 		frame.setBounds(100, 100, 1200, 800);
 		frame.setLocationRelativeTo(null);
+		frame.setResizable(false);// 창의 크기를 변경하지 못하게
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);

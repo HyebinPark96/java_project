@@ -15,6 +15,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.DecimalFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -107,7 +108,7 @@ public class PaymentFrame extends JFrame implements ActionListener {
 
 		JLabel agmLb3 = new JLabel("개인정보 제공 및 위탁안내");
 		agmLb3.setFont(f3);
-		add(agmLb3); // add 가 setBackground보다 위에 작성되어야 보임
+		add(agmLb3); 
 		agmLb3.setBackground(Color.WHITE);
 		agmLb3.setOpaque(true);
 		agmLb3.setBounds(350, 60, 140, 20);
@@ -396,10 +397,7 @@ public class PaymentFrame extends JFrame implements ActionListener {
 		allChkLb.setBounds(543, 20, 50, 20);
 		allChkLb.setCursor(cursor);
 		allChkLb.addMouseListener(new MouseListener() {
-			// 체크박스에 텍스트 "동의" 바로 넣어주고 액션리스너 해도 되지만,
-			// 체크박스의 텍스트 폰트 변경이 안되어서
-			// 따로 텍스트 "동의"를 라벨로 생성 후, 클릭하였을 때 체크박스 on/off 토글기능을 구현하였다.
-
+			
 			@Override
 			public void mouseReleased(MouseEvent e) {
 			}
@@ -466,16 +464,22 @@ public class PaymentFrame extends JFrame implements ActionListener {
 		costLb.setBackground(g.getColor());
 		costLb.setForeground(Color.WHITE);
 		costLb.setOpaque(true);
-		costLb.setBounds(620, 200, 50, 20);
+		costLb.setBounds(620, 140, 50, 40);
 
 		// 결제금액 금액부분 라벨
-		JLabel getCostLb = new JLabel("250,000"); // 일단 공백
+		JLabel getCostLb = new JLabel(); // 일단 공백
+		PaymentMgr mgr = new PaymentMgr();
+		if(mgr.totalCostChk(userId)>0) {
+			int totalCost = mgr.totalCostChk(userId);
+			DecimalFormat df = new DecimalFormat("###,###"); // 금액 표기 형식
+			getCostLb.setText(df.format(totalCost)+"원");
+		}
 		add(getCostLb);
-		getCostLb.setFont(f5);
+		getCostLb.setFont(f1);
 		getCostLb.setBackground(g.getColor());
 		getCostLb.setForeground(Color.WHITE);
 		getCostLb.setOpaque(true);
-		getCostLb.setBounds(710, 200, 60, 20);
+		getCostLb.setBounds(640, 200, 130, 40);
 
 		JLabel nextLb = new JLabel("다   음");
 		nextLb.setFont(f4);
@@ -498,9 +502,12 @@ public class PaymentFrame extends JFrame implements ActionListener {
 					CardPaymentFrame cpf = new CardPaymentFrame(userId);
 					cpf.setVisible(true);
 
-				} else { // 하나라도 체크되어 있지 않다면
+				} else if(check < 3 && clickCnt == 1) { // 결제수단은 골랐지만 약관 3개 모두 체크가 아니라면
 					JOptionPane.showMessageDialog(null, "모든 약관에 동의해주세요.");
 					System.out.println("약관동의 갯수 : " + check + "개, 결제수단 체크 갯수 : " + clickCnt + "개");
+				} else if(check == 3 && clickCnt < 1) { // 약관 3개 모두 체크했지만 결제수단 고르지 않았다면 
+					JOptionPane.showMessageDialog(null, "결제수단을 선택해주세요.");
+					System.out.println("결제수단 체크 갯수 : " + clickCnt + "개");
 				}
 
 			}

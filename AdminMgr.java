@@ -1,4 +1,4 @@
-/* 관리자페이지 예약관리 매니저 | 마지막 수정날짜: 2022-03-22 | 마지막 작성자: 김서하 */
+/* 관리자페이지 예약관리 매니저 | 마지막 수정날짜: 2022-03-25 | 마지막 작성자: 김서하 */
 package javaproject;
 
 import java.sql.Connection;
@@ -40,16 +40,20 @@ public class AdminMgr {
 			
 			while (rs.next()) {
 				Vector in = new Vector<String>(); // 1개의 레코드 저장하는 벡터 생성
-				String id = rs.getString(1);
-				String r_room = rs.getString(2);
-				String startdate = rs.getString(3);
-				String enddate = rs.getString(4);
-				String headcount = rs.getString(5);
-				String r_status = rs.getString(6);
-				String p_cost = rs.getString(7);
-				String res_no = rs.getString(8);
+
+				String res_no = rs.getString(1);
+				String id = rs.getString(2);
+				String r_room = rs.getString(3);
+				String startdate = rs.getString(4);
+				String enddate = rs.getString(5);
+				String headcount = rs.getString(6);
+				String r_status = rs.getString(7);
+				String p_cost = rs.getString(8);
+
 
 				// 벡터에 각각의 값 추가
+
+				in.add(res_no);
 				in.add(id);
 				in.add(r_room);
 				in.add(startdate);
@@ -57,7 +61,6 @@ public class AdminMgr {
 				in.add(headcount);
 				in.add(r_status);
 				in.add(p_cost);
-				in.add(res_no);
 						
 				// 전체 데이터를 저장하는 벡터에 in(1명의 데이터 저장) 벡터 추가
 				data.add(in);

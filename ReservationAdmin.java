@@ -1,4 +1,4 @@
-/*-- 관리자페이지 예약관리 | 마지막 수정날짜: 2022-03-23 | 마지막 수정인: 김서하--*/
+/*-- 관리자페이지 예약관리 | 마지막 수정날짜: 2022-03-25 | 마지막 수정인: 김서하--*/
 
 package javaproject;
 
@@ -103,6 +103,7 @@ public class ReservationAdmin {
 		//예약데이터 테이블
 		result = mgr.selectAll();
 		title = new Vector<>();
+		title.add("예약번호");
 		title.add("id");
 		title.add("객실");
 		title.add("체크인");
@@ -110,7 +111,6 @@ public class ReservationAdmin {
 		title.add("예약인원");
 		title.add("결제 상태");
 		title.add("결제 금액");
-		title.add("예약번호");
 		model.setDataVector(result, title);
 		
 		sp.setBounds(200, 200, 800, 400);
@@ -178,7 +178,7 @@ public class ReservationAdmin {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int row = table.getSelectedRow();
-				int column = 7;
+				int column = 0; //맨처음
 
 				String res_no = (String)table.getValueAt(row, column);
 				res_noTf.setText(res_no);
