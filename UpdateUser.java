@@ -1,4 +1,4 @@
-/* 사용자 마이페이지 내정보수정 | 마지막 수정날짜: 2022-03-22 | 마지막 수정인: 김서하 */
+/* 사용자 마이페이지 내정보수정 | 마지막 수정날짜: 2022-03-25 | 마지막 수정인: 김서하 */
 
 package javaproject;
 
@@ -28,7 +28,7 @@ public class UpdateUser {
 	
 	private JPanel p1;
 	private JLabel titleLb, pwdLb, newPwdLb, idLb, nameLb, emailLb, birthdayLb, genderLb, phoneLb; 
-	private JButton updateBtn, listBtn, saveBtn, homeBtn;
+	private JButton updateBtn, listBtn, saveBtn, homeBtn, delUserBtn;
 	private JTextField idTf, nameTf, emailTf, birthdayTf, phoneTf, genderTf;
 	private JPasswordField pwdTf, newPwdTf;
 	
@@ -99,6 +99,14 @@ public class UpdateUser {
 		listBtn.setForeground(Color.white);
 		listBtn.setBackground(Color.black);
 		p1.add(listBtn);
+		
+		//회원탈퇴버튼
+		delUserBtn = new JButton ("회원탈퇴");
+		p1.add(delUserBtn);
+		delUserBtn.setBounds(20, 300, 100, 30);
+		delUserBtn.setFont(f2);
+		delUserBtn.setForeground(Color.white);
+		delUserBtn.setBackground(Color.lightGray);
 		
 		//홈버튼(메인으로)
 		homeBtn = new JButton("홈으로");
@@ -220,7 +228,6 @@ public class UpdateUser {
 		/*기능 구현*/
 		
 		//id값으로 내 정보 받아오기
-		
 		nameTf.setText(mgr.userInfo(userId).getName());
 		birthdayTf.setText(mgr.userInfo(userId).getBirthday());
 		genderTf.setText(mgr.userInfo(userId).getGender());
@@ -229,9 +236,9 @@ public class UpdateUser {
 		
 		// 정보 잘 받아옴?
 		if (!nameTf.getText().equals("") && !birthdayTf.getText().equals("") && !genderTf.getText().equals("")) {
-			System.out.println("[update User]: id(" + userId + ")정보 불러오기 성공");
+			System.out.println("[updateUser]: 회원정보(" + userId + ") 불러오기 성공");
 		}else {
-			System.out.println("[update User]: id(" + userId + ")정보 불러오기 실패");
+			System.out.println("[updateUser]: 회원정보(" + userId + ") 불러오기 실패");
 		}
 		
 		
@@ -243,14 +250,14 @@ public class UpdateUser {
 				
 				//비밀번호, 이메일, 연락처 빈 칸으로 둔 경우
 				if (pwdTf.getText().equals("")) { // 비밀번호 안씀
-					JOptionPane.showMessageDialog(null, "비밀번호를 입력하세요.");
+					JOptionPane.showMessageDialog(null, "[내정보수정] 비밀번호를 입력하세요.");
 				} else if (emailTf.getText().equals("")) { // 이메일 안씀
-					JOptionPane.showMessageDialog(null, "이메일을 입력하세요.");
+					JOptionPane.showMessageDialog(null, "[내정보수정] 이메일을 입력하세요.");
 				} else if (phoneTf.getText().equals("")) { // 연락처 안씀
-					JOptionPane.showMessageDialog(null, "연락처를 입력하세요");
+					JOptionPane.showMessageDialog(null, "[내정보수정] 연락처를 입력하세요");
 				} else if (!newPwdTf.getText().equals("")) { // 새 비밀번호 씀
 					if (pwdTf.getText().equals("")) {
-						JOptionPane.showMessageDialog(null, "기존 비밀번호를 입력하세요.");
+						JOptionPane.showMessageDialog(null, "[내정보수정] 기존 비밀번호를 입력하세요.");
 					} else if (mgr.loginChk(idTf.getText().trim(), pwdTf.getText().trim()).length()>0/* true */) { // 비밀번호와 아이디 체크
 						UserBean bean = new UserBean();
 						bean.setId(idTf.getText());
@@ -261,9 +268,10 @@ public class UpdateUser {
 						System.out.println("새 비밀번호:"+newPwdTf.getText());
 						pwdTf.setText("");
 						newPwdTf.setText("");
-						JOptionPane.showMessageDialog(null, "비밀번호가 재설정되었습니다.");
+						JOptionPane.showMessageDialog(null, "[내정보수정] 비밀번호가 재설정되었습니다.");
+						System.out.println("[UpdateUser] 회원(" + userId + ")비밀번호 재설정 완료");
 					} else { // 비밀번호 아이디 불일치
-						JOptionPane.showMessageDialog(null, "비밀번호가 일치하지 않습니다.");
+						JOptionPane.showMessageDialog(null, "[내정보수정] 비밀번호가 일치하지 않습니다.");
 					}
 				} else if (newPwdTf.getText().equals("")) { // 새 비밀번호 없이 다른 정보만 변경저장
 					if(mgr.loginChk(idTf.getText().trim(), pwdTf.getText().trim()).length()>0) {
@@ -273,9 +281,10 @@ public class UpdateUser {
 						bean.setEmail(emailTf.getText());
 						bean.setPhone(phoneTf.getText());
 						mgr.userUpdt(bean);
-						JOptionPane.showMessageDialog(null, "회원정보가 수정되었습니다.");	
+						JOptionPane.showMessageDialog(null, "[내정보수정] 회원정보가 수정되었습니다.");	
+						System.out.println("[UpdateUser] 회원정보 ("+userId+") 재설정 완료");
 					}else {
-						JOptionPane.showMessageDialog(null, "비밀번호가 일치하지 않습니다.");
+						JOptionPane.showMessageDialog(null, "[내정보수정] 비밀번호가 일치하지 않습니다.");
 					}
 				}
 		// 새로고침
@@ -290,6 +299,17 @@ public class UpdateUser {
 				jf.dispose();
 			}
 		});
+		
+		// 회원탈퇴버튼 액션: 회원탈퇴창으로 이동
+		delUserBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new DeleteUser(userId);
+				jf.dispose();
+			}
+		});
+		
 		
 		//홈버튼액션: 메인으로
 		homeBtn.addActionListener(new ActionListener() {

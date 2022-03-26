@@ -335,7 +335,7 @@ public class ReservationAdmin {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new MainPage(userId);
+				new MainPage();
 				jf.dispose();
 				
 			}

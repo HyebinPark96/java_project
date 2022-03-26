@@ -65,7 +65,7 @@ public class ReservationMgr {
 		try {
 			con = pool.getConnection();
 			sql = "INSERT reservation (id, r_room, startdate, enddate, headcount, r_status, p_cost ) " 
-			+ "VALUES (?, ?, ?, DATE_ADD(?, INTERVAL 1 DAY), ?, ?, ?)";
+			+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 			pstmt = con.prepareStatement(sql);
 
 			pstmt.setString(1, userId);
@@ -94,9 +94,6 @@ public class ReservationMgr {
 	
 
 	// SELECT : 중복날짜 체크
-	// If) 3/1 ~ 3/6 예약
-	// 1행 startdate : 20220301, enddate : startdate+1
-	// 2행 ... 
 	public boolean dateChk(int room, java.sql.Date startDate, java.sql.Date endDate) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -106,18 +103,19 @@ public class ReservationMgr {
 
 		try {
 			con = pool.getConnection();
-
-			// 쿼리문
-			sql = "SELECT r_room, startdate, enddate " 
+			sql = "SELECT * " 
 			+ "FROM reservation " 
-			+ "WHERE r_room = ? AND startdate = ? AND enddate = DATE_ADD(?, INTERVAL 1 DAY)";
+			+ "WHERE (r_room = ?) AND (((?<=enddate) AND (?>=startdate)) "
+			+ "OR((?<=enddate) AND (?>=startdate)));";
 
 			pstmt = con.prepareStatement(sql);
 
 			pstmt.setInt(1, room); // 1은 첫번째 ?를 의미
 			pstmt.setDate(2, startDate); // 2은 두번째 ?를 의미
-			pstmt.setDate(3, endDate); // 3은 세번째 ?를 의미
-
+			pstmt.setDate(3, startDate); // 3은 세번째 ?를 의미
+			pstmt.setDate(4, endDate); // 4은 세번째 ?를 의미
+			pstmt.setDate(5, endDate); // 5은 세번째 ?를 의미
+			
 			// executeQuery : select 실행문
 			rs = pstmt.executeQuery();
 

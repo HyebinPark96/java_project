@@ -1,4 +1,4 @@
-/* 회원가입창 | 마지막 수정날짜: 2022-03-22 | 마지막 수정인: 김서하 */
+/* 회원가입창 | 마지막 수정날짜: 2022-03-25 | 마지막 수정인: 김서하 */
 //회원가입시 mode값은 기본 0 (사용자) 로 설정되어있음
 package javaproject;
 
@@ -7,6 +7,8 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -214,7 +216,7 @@ import javax.swing.text.PlainDocument;
 			add(joinBtn);
 			
 			
-			birthdayTf.setText("YYYY-MM-DD");
+//			birthdayTf.setText("YYYY-MM-DD");
 			setVisible(true);
 			
 			
@@ -236,6 +238,8 @@ import javax.swing.text.PlainDocument;
 						JOptionPane.showMessageDialog(null, "이름을 입력하세요.");
 					} else if (birthdayTf.getText().equals("")) { // 생일 안씀
 						JOptionPane.showMessageDialog(null, "생일을 입력하세요.");
+					} else if (birthdayTf.getText().length() < 8)	 {
+						JOptionPane.showMessageDialog(null, "YYYYMMDD 형식으로 생일을 입력하세요.");
 					} else if (emailTf.getText().equals("")) { // 이메일 안씀
 						JOptionPane.showMessageDialog(null, "이메일을 입력하세요.");
 					} else if (phoneTf.getText().equals("")) { // 연락처 안씀
@@ -243,7 +247,7 @@ import javax.swing.text.PlainDocument;
 					} else if (mgr.idChk(idTf.getText().trim())) {
 						System.out.println("아이디중복확인: DB에 있음");
 						JOptionPane.showMessageDialog(null, "아이디 중복확인을 해주세요.");
-					} else { // 전부 다 쓴거 맞지..?
+					} else { // 전부 다 쓴거 맞지..? 
 						JOptionPane.showMessageDialog(null, "회원가입이 완료되었습니다.");
 						UserBean bean = new UserBean();
 						bean.setId(idTf.getText());
@@ -252,7 +256,6 @@ import javax.swing.text.PlainDocument;
 						bean.setEmail(emailTf.getText());
 						bean.setPhone(phoneTf.getText());
 						bean.setBirthday(birthdayTf.getText());
-						
 						// radio박스에서 성별값 찾아오기
 						String gen = "여성"; // gender가 not null 이어서 기본 여성으로 정의
 						bean.setGender(gen);
@@ -262,14 +265,25 @@ import javax.swing.text.PlainDocument;
 							gen = "남";
 						}
 						if (mgr.userSign(bean)) {
-							System.out.println(idTf.getText() + "회원 등록완료");
-						}
-						dispose(); // --등록완료 후 창 종료
+							System.out.println("[joinFrame] "+ idTf.getText()+ "회원 등록완료");
+							dispose(); // --등록완료 후 창 종료
+						}	
 					}
-
 				}
 
 			});
+			
+			// 생일 숫자만
+			birthdayTf.addKeyListener(new KeyAdapter() {
+				public void keyTyped(KeyEvent e) {
+					char c = e.getKeyChar();
+					if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)))) {
+						getToolkit().beep();
+						e.consume();
+					}
+				}
+			});
+			
 			
 			// 아이디 중복확인 버튼 액션
 			idCheckBtn.addActionListener(new ActionListener() {

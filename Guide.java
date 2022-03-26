@@ -167,6 +167,7 @@ public class Guide {
 				+ "1803-18, Namseo-daero, Seo-myeon, Namgae-gun,\r\n"
 				+ "Gyeongsangnam-do, Republic of Korea");
 		addr.setBounds(211, 534, 279, 120);
+		addr.setEditable(false);
 		frame.getContentPane().add(addr);
 		
 		//홈 버튼 -> 클릭 시 메인화면으로 이동

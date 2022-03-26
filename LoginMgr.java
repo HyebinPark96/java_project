@@ -1,9 +1,12 @@
-/*-- 로그인매니저 | 마지막 수정날짜: 2022-03-23 | 마지막 수정인: 김서하--*/
+/*-- 로그인매니저 | 마지막 수정날짜: 2022-03-25 | 마지막 수정인: 김서하--*/
 package javaproject;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Vector;
+
+import javax.swing.JOptionPane;
 
 
 // DB연동의 기능의 클래스 
@@ -118,9 +121,7 @@ public class LoginMgr {
 	} 
 	
 
-	
-	
-	
+
 	// INSERT : 회원가입완료 -> DB에 입력
 	public boolean userSign(UserBean bean) {
 		Connection con = null;
@@ -156,6 +157,7 @@ public class LoginMgr {
 		return flagForUserSign;
 	} //---회원가입
 	
+	
 	// SELECT: UpdateUser_회원정보조회
 	public UserBean userInfo(String id) {
 		Connection con = null;
@@ -185,7 +187,7 @@ public class LoginMgr {
 			pool.freeConnection(con, pstmt, rs);			
 		}
 		return bean;
-	}
+	}//--회원정보조회
 	
 
 	// UPDATE: UpdateUser_내정보 수정 (회원)
@@ -214,37 +216,130 @@ public class LoginMgr {
 		return flagForUserUpdt;
 	} //--내정보수정	
 	
-	// SELECT: ReservationUser_회원예약조회
-		public ReservationBean resInfo(String id) {
-			Connection con = null;
-			PreparedStatement pstmt = null;
-			ResultSet rs = null;
-			String sql = null;
-			ReservationBean bean = new ReservationBean();
-
-			try {
-				con = pool.getConnection();
-				sql = "select res_no, r_room, startdate, enddate, r_status, p_cost from reservation where id = ? ";
-				pstmt = con.prepareStatement(sql);
-				pstmt.setString(1, id);
-				rs = pstmt.executeQuery();
-				
-				if(rs.next()) {
-					bean.setRes_no(rs.getString("res_no"));
-					bean.setR_room(rs.getString("r_room"));
-					bean.setStartdate(rs.getString("startdate"));
-					bean.setEnddate(rs.getString("enddate"));
-					bean.setR_status(rs.getString("r_status"));
-					bean.setP_cost(rs.getInt("p_cost"));
-//					System.out.println("[loginMgr_resInfo]: userid:(" + id + ")예약정보를 bean에 담았습니다.");
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				pool.freeConnection(con, pstmt, rs);			
-			}
-			return bean;
-		}
 	
+	// SELECT: ReservationUser_회원예약조회
+	public Vector resInfo(String id) { 
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		Vector data = new Vector<>();
+		data.clear();
+		
+		try {
+			con = pool.getConnection();
+			// 쿼리문
+			sql = "select * from reservation where id = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			
+			
+			while (rs.next()) {
+				Vector in = new Vector<String>(); // 1개의 레코드 저장하는 벡터 생성
+				
+//				String id = rs.getString(1);
+				String r_room = rs.getString(2);
+				String startdate = rs.getString(3);
+				String enddate = rs.getString(4);
+				String headcount = rs.getString(5);
+				String r_status = rs.getString(6);
+				String p_cost = rs.getString(7);
+				String res_no = rs.getString(8);
+
+
+				// 벡터에 각각의 값 추가
+
+				in.add(id);
+				in.add(r_room);
+				in.add(startdate);
+				in.add(enddate);
+				in.add(headcount);
+				in.add(r_status);
+				in.add(p_cost);
+				in.add(res_no);
+							
+				// 전체 데이터를 저장하는 벡터에 in(1명의 데이터 저장) 벡터 추가
+				data.add(in);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+		return data;
+	}//-- 회원예약조회
+	
+	
+	// DELETE: ReservationUser_회원예약취소
+	public void ur_del(String res_no) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = null;
+//		Vector data = new Vector<>();
+//		data.clear();
+
+		try {
+			con = pool.getConnection();
+
+			// 쿼리문
+			sql = "delete from reservation where res_no = ?";
+			pstmt = con.prepareStatement(sql);
+
+			pstmt.setString(1, res_no);
+			int cnt = pstmt.executeUpdate();
+
+			if (cnt == 1)
+				JOptionPane.showMessageDialog(null, "[예약 취소] 예약번호: " + res_no + " 예약이 취소되었습니다.");
+			else
+				JOptionPane.showMessageDialog(null, "[예약 취소 error] 예약번호: " + res_no + " 취소 중 오류가 발생하였습니다.");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+	}//-- 회원예약취소
+
+	// DELETE: DeleteUser_회원탈퇴
+	@SuppressWarnings("resource")
+	public void delUser(String id) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = null;
+
+		try {
+			con = pool.getConnection();
+
+			// 쿼리문
+			sql = "delete from reservation where id = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			int cnt_r = pstmt.executeUpdate();
+			
+			// 쿼리문2
+			sql = "delete from user where id = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			int cnt_u = pstmt.executeUpdate();
+					
+
+			if (cnt_u == 1 && cnt_r > 0) {
+				System.out.println("[LoginMgr] " + id + " 회원의 예약 및 계정이 삭제되었습니다.");
+			} else if (cnt_u ==1 && cnt_r == 0) {
+				System.out.println("[LoginMgr] " + id + " 회원의 계정이 삭제되었습니다. (삭제된 예약 없음)");
+			} else if (cnt_u == 0 && cnt_r > 0) {
+				System.out.println("[LoginMgr] " + id + " 회원의 모든 예약이 삭제되었습니다.");
+			} else {
+				System.out.println("[LoginMgr] " + id + " 회원의 예약과 계정 삭제에 오류가 발생하였습니다.");
+				System.out.println("[LoginMgr] 삭제된 예약갯수: "+cnt_r+"  삭제된 계정갯수: "+ cnt_u);
+			}	
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+	}//-- 회원탈퇴
 	
 }

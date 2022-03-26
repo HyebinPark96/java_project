@@ -1,4 +1,4 @@
-/* 사용자 마이페이지 내예약조회 | 마지막 수정날짜: 2022-03-22 | 마지막 수정인: 김서하 */
+/* 사용자 마이페이지 내예약조회 | 마지막 수정날짜: 2022-03-25 | 마지막 수정인: 김서하 */
 
 package javaproject;
 
@@ -11,6 +11,7 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,8 +19,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 public class ReservationUser {
 
@@ -27,10 +30,14 @@ public class ReservationUser {
 	JFrame jf = new JFrame();
 	
 	private JPanel p1;
-	private JLabel titleLb, idLb, pwdLb, p_costLb, res_noLb, r_statusLb, r_roomLb, startdateLb, enddateLb, nameLb; 
-	private JButton updateBtn, listBtn, cancelBtn, homeBtn;
-	private JTextField res_noTf, startdateTf, enddateTf, r_statusTf, r_roomTf, p_costTf, idTf, nameTf;
+	private JLabel titleLb, pwdLb; 
+	private JButton updateBtn, listBtn, cancelBtn, homeBtn, delUserBtn;
 	private JPasswordField pwdTf;
+	private DefaultTableModel model;
+	@SuppressWarnings("rawtypes")
+	private Vector title, result;
+	private JTable table;
+	private JScrollPane sp;
 	
 	//메인
 	public static void main(String[] args) {
@@ -47,6 +54,7 @@ public class ReservationUser {
 	}
 
 	// 생성자 (매개변수)
+	@SuppressWarnings({ "unchecked", "serial" })
 	public ReservationUser(String userId) {
 		// 기본 셋팅
 		jf.setSize(1200,800);
@@ -69,20 +77,43 @@ public class ReservationUser {
 		
 		// font 설정
 		Font f1 = new Font("맑은 고딕", Font.BOLD, 40); //타이틀 폰트
-		Font f2 = new Font("맑은 고딕", Font.BOLD, 12); //버튼 폰트
-		Font f3 = new Font("맑은 고딕", Font.BOLD, 12); //라벨 폰트
+		Font f2 = new Font("맑은 고딕", Font.BOLD, 12); //버튼 폰트	
 		
-
-		jf.setTitle(userId+"회원 예약 조회");
+		jf.setTitle("[회원예약조회]: "+userId);
 		p1 = new JPanel();
 		
-		//파넬꾸미기
+		model = new DefaultTableModel() {
+			// 테이블 셀 수정 불가 (디폴트: 수정가능)
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		table = new JTable(model);
+		sp = new JScrollPane(table);
+		
+		//파넬 설정
 		p1.setBorder(new EmptyBorder(5, 5, 5, 5));
 		jf.setContentPane(p1);
 		p1.setLayout(null);
 		p1.setBackground(Color.white);
 
-		//정보수정버튼
+		// 예약데이터 테이블
+		result = mgr.resInfo(userId);
+		title = new Vector<>();
+		title.add("id");
+		title.add("객실");
+		title.add("체크인");
+		title.add("체크아웃");
+		title.add("예약인원");
+		title.add("결제 상태");
+		title.add("결제 금액");
+		title.add("예약번호");
+		model.setDataVector(result, title);
+		
+		sp.setBounds(200, 200, 800, 400);
+		p1.add(sp);
+		
+		//정보수정버튼 --> 내정보수정으로 이동
 		updateBtn = new JButton("내정보수정");
 		updateBtn.setBounds(20, 200, 100, 30);
 		updateBtn.setFont(f2);
@@ -90,7 +121,7 @@ public class ReservationUser {
 		updateBtn.setBackground(Color.black);
 		p1.add(updateBtn);
 
-		//예약조회버튼(탭)
+		//예약조회버튼 --> 현재페이지버튼(비활성화)
 		listBtn = new JButton("내예약조회");
 		listBtn.setBounds(20, 250, 100, 30);
 		listBtn.setFont(f2);
@@ -98,6 +129,14 @@ public class ReservationUser {
 		listBtn.setBackground(Color.white);
 		listBtn.setEnabled(false);
 		p1.add(listBtn);
+		
+		//회원탈퇴버튼
+		delUserBtn = new JButton ("회원탈퇴");
+		p1.add(delUserBtn);
+		delUserBtn.setBounds(20, 300, 100, 30);
+		delUserBtn.setFont(f2);
+		delUserBtn.setForeground(Color.white);
+		delUserBtn.setBackground(Color.lightGray);
 		
 		//홈버튼(메인으로)
 		homeBtn = new JButton("홈으로");
@@ -107,121 +146,13 @@ public class ReservationUser {
 		homeBtn.setBackground(Color.gray);
 		p1.add(homeBtn);
 
-
 		//타이틀라벨
 		titleLb = new JLabel("내 예약 조회");
 		titleLb.setFont(f1);
 		titleLb.setBounds(450, 70, 300, 100);
 		p1.add(titleLb);
-		
-		//"예약번호" 라벨
-		res_noLb = new JLabel("예약번호");
-		res_noLb.setFont(f3);
-		res_noLb.setBounds(450, 260, 100, 20);
-		p1.add(res_noLb);
-		//"예약번호" 텍스트필드
-		res_noTf = new JTextField();
-		res_noTf.setColumns(10);
-		res_noTf.setBounds(520, 260, 160, 20);
-		res_noTf.setEditable(false);
-		p1.add(res_noTf);
-		
-		//"아이디" 라벨
-		idLb = new JLabel("아이디");
-		idLb.setFont(f3);
-		idLb.setBounds(450, 290, 100, 20);
-		p1.add(idLb);
-		//"아이디" 텍스트필드 
-		idTf = new JTextField();
-		idTf.setColumns(10);
-		idTf.setBounds(520, 290, 160, 20);
-		idTf.setText(userId);
-		idTf.setEditable(false);
-		p1.add(idTf);
-		
-		//"이름" 라벨
-		nameLb = new JLabel("예약자 성명");
-		nameLb.setFont(f3);
-		nameLb.setBounds(450, 320, 100, 20);
-//		p1.add(nameLb);
-		//"이름" 텍스트필드
-		nameTf = new JTextField();
-		nameTf.setColumns(10);
-		nameTf.setBounds(520, 320, 160, 20);
-//		p1.add(nameTf);
-		
-		//"예약 객실" 라벨
-		r_roomLb = new JLabel("예약객실");
-		r_roomLb.setFont(f3);
-		r_roomLb.setBounds(450, 350, 100, 20);
-		p1.add(r_roomLb);
-		//"예약 객실" 텍스트필드
-		r_roomTf = new JTextField();
-		r_roomTf.setColumns(10);
-		r_roomTf.setBounds(520, 350, 160, 20);
-		r_roomTf.setEditable(false);
-		p1.add(r_roomTf);
-		
-		//"체크인" 라벨
-		startdateLb = new JLabel("체크인");
-		startdateLb.setFont(f3);
-		startdateLb.setBounds(450, 380, 100, 20);
-		p1.add(startdateLb);
-		//"체크인" 텍스트필드
-		startdateTf = new JTextField();
-		startdateTf.setColumns(10);
-		startdateTf.setBounds(520, 380, 160, 20);
-		startdateTf.setEditable(false);
-		p1.add(startdateTf);
-		
-		//"체크아웃" 라벨
-		enddateLb = new JLabel("체크아웃");
-		enddateLb.setFont(f3);
-		enddateLb.setBounds(450, 410, 100, 20);
-		p1.add(enddateLb);
-		//"체크아웃" 텍스트필드
-		enddateTf = new JTextField();
-		enddateTf.setColumns(10);
-		enddateTf.setBounds(520, 410, 160, 20);
-		enddateTf.setEditable(false);
-		p1.add(enddateTf);		
-		
-		//"결제 상태" 라벨
-		r_statusLb = new JLabel("결제 상태");
-		r_statusLb.setFont(f3);
-		r_statusLb.setBounds(450, 440, 100, 20);
-		p1.add(r_statusLb);
-		//"결제 상태" 텍스트필드
-		r_statusTf = new JTextField();
-		r_statusTf.setColumns(10);
-		r_statusTf.setBounds(520, 440, 160, 20);
-		p1.add(r_statusTf);	
-		
-		//"결제 금액" 라벨
-		p_costLb = new JLabel("결제 금액");
-		p_costLb.setFont(f3);
-		p_costLb.setBounds(450, 470, 100, 20);
-		p1.add(p_costLb);
-		//"결제 금액" 텍스트필드
-		p_costTf = new JTextField();
-		p_costTf .setColumns(10);
-		p_costTf .setBounds(520, 470, 160, 20);
-		p1.add(p_costTf);	
-		
-		//"비밀번호" 라벨
-		pwdLb = new JLabel("비밀번호");
-		pwdLb.setFont(f3);
-		pwdLb.setBounds(450, 590, 100, 20);
-		p1.add(pwdLb);
-		//"비밀번호" 텍스트필드
-		pwdTf = new JPasswordField();
-		pwdTf.setColumns(10);
-		pwdTf.setBounds(520, 590, 160, 20);
-		pwdTf.setEchoChar('●');
-		p1.add(pwdTf);	
-			
-		
-		//"저장" 버튼
+
+		//"예약취소" 버튼
 		cancelBtn = new JButton("예약취소");
 		cancelBtn.setBounds(450, 650, 240, 40);
 		cancelBtn.setFont(f2);
@@ -229,60 +160,46 @@ public class ReservationUser {
 		cancelBtn.setBackground(Color.BLACK);
 		p1.add(cancelBtn);
 		
+		//비밀번호 라벨
+		pwdLb = new JLabel("비밀번호 입력");
+		p1.add(pwdLb);
+		pwdLb.setFont(f2);
+		pwdLb.setBounds(450, 600, 100, 40);
+		//비밀번호 텍스트필드
+		pwdTf = new JPasswordField();
+		p1.add(pwdTf);
+		pwdTf.setEchoChar('●');
+		pwdTf.setBounds(540, 614, 140, 20);
 		
-
+		
 		
 		/*기능 구현*/
 		
 		// id값으로 내 예약정보불러오기
-		if (mgr.resInfo(userId).getRes_no()==null) {
-			JOptionPane.showMessageDialog(null, "예약내역이 없습니다.");
-		}else {
-			res_noTf.setText(""+mgr.resInfo(userId).getRes_no());
-			r_roomTf.setText(""+mgr.resInfo(userId).getR_room());
-			startdateTf.setText(mgr.resInfo(userId).getStartdate());
-			enddateTf.setText(mgr.resInfo(userId).getEnddate());
-			r_statusTf.setText(mgr.resInfo(userId).getR_status());
-			p_costTf.setText(""+mgr.resInfo(userId).getP_cost());
-			if (res_noTf.getText().equals("")) {
-				System.out.println("[ReservationUser]: id("+userId + ")예약 번호 불러오기 실패");
-			} else if (r_roomTf.getText().equals("")) {
-				System.out.println("[ReservationUser]: id("+ userId + ")예약 객실 불러오기 실패");
-			} else if (startdateTf.getText().equals("")) {
-				System.out.println("[ReservationUser]: id("+ userId + ")체크인날짜 불러오기 실패");	
-			} else if (enddateTf.getText().equals("")) {
-				System.out.println("[ReservationUser]: id("+ userId + ")체크아웃날짜 불러오기 실패");
-			} else if (r_statusTf.getText().equals("")) {
-				System.out.println("[ReservationUser]: id("+ userId + ")결제상태 불러오기 실패");
-			} else if (p_costTf.getText().equals("")) {
-				System.out.println("[ReservationUser]: id("+ userId + ")결제금액 불러오기 실패");	
-			} else {
-				System.out.println("[ReservationUser]: id("+userId + ")예약 정보 불러오기 성공!");
-			}
-		}
-
-		// 예약 취소
+		
+		// 예약 취소 LoginMgr로 삭제
 		cancelBtn.addActionListener(new ActionListener() {
-			
 			@SuppressWarnings("deprecation")
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				//비밀번호, 이메일, 연락처 빈 칸으로 둔 경우
-				if (pwdTf.getText().equals("")) { // 비밀번호 안씀
-					JOptionPane.showMessageDialog(null, "비밀번호를 입력하세요.");
-				} else if (!pwdTf.getText().equals("")) { //비번은썼음
-					if(mgr.loginChk(idTf.getText().trim(), pwdTf.getText().trim()).length()>0/* true */) { // 비밀번호와 아이디 체크
-						JOptionPane.showMessageDialog(null, "예약취소를 하겠습니까?");
-					}else if (!(mgr.loginChk(idTf.getText().trim(), pwdTf.getText().trim()).length()>0)/* true */) {
-						JOptionPane.showMessageDialog(null, "비밀번호가 일치하지 않습니다.");
-						pwdTf.setText("");
-					}
+				if(mgr.loginChk(userId, pwdTf.getText())!=null/*true*/) {
+					//아이디 비밀번호 일치
+					int row = table.getSelectedRow();
+					String res_no = (String)table.getValueAt(row, 7);
+					mgr.ur_del(res_no);
+					//삭제 후 디비값 불러오기
+					@SuppressWarnings("rawtypes")
+					Vector result = mgr.resInfo(userId);
+					model.setDataVector(result, title);
+				} else { // 비밀번호 일치 안 했을때
+					JOptionPane.showMessageDialog(null, "비밀번호가 일치하지 않습니다.");
 				}
-		// 새로고침
-		jf.validate();
-	}
-});
-		//정보수정버튼 액션
+			}
+		});
+		
+				
+		//정보수정버튼 액션 (내정보수정으로 이동)
 		updateBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -291,8 +208,17 @@ public class ReservationUser {
 			}
 		});
 		
+		// 회원탈퇴버튼 액션: 회원탈퇴창으로 이동
+		delUserBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new DeleteUser(userId);
+				jf.dispose();
+			}
+		});		
 		
-		//홈버튼 액션 
+		//홈버튼 액션 (메인으로 이동)
 		homeBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

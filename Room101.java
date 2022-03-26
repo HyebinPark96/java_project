@@ -116,6 +116,7 @@ public class Room101 {
 				+ "Facilities : 미니정원\r\n\r\n" + "Amenity : TV/손전등/슬리퍼/구둣주걱/냉장고/옷장/\r\n"
 				+ "미니바/1회용 칫솔 및 치약/목욕가운/헤어드라이어\r\n\r\n" + "Price : 150,000");
 		rmtext.setBounds(668, 204, 429, 323);
+		rmtext.setEditable(false);//텍스트 수정 불가능
 		frame.getContentPane().add(rmtext);
 
 		//Back 버튼 -> 펜션안내 페이지로 돌아가서 다른 객실 선택 할 수 있게

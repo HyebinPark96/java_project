@@ -39,6 +39,8 @@ public class PaymentFrame extends JFrame implements ActionListener {
 	private JButton nextBtn;
 	private Color cardLbColor;
 	private int clickCnt;
+	
+
 
 	public static void main(String[] args) {// 실행
 		EventQueue.invokeLater(new Runnable() {
@@ -349,22 +351,6 @@ public class PaymentFrame extends JFrame implements ActionListener {
 			
 			@Override
 			public void mouseReleased(MouseEvent e) {
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
 				if (e.getSource() == allChkCb) {
 					if (!allChkCb.getState()) { // 전체동의 CB false 상태
 						if (!agmCb1.getState() || !agmCb2.getState() || !agmCb3.getState()) { // 한 개라도 체크박스 false 상태일 때
@@ -386,6 +372,23 @@ public class PaymentFrame extends JFrame implements ActionListener {
 					}
 				}
 			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
+			}
 		});
 
 		// 전체동의 라벨
@@ -400,22 +403,6 @@ public class PaymentFrame extends JFrame implements ActionListener {
 			
 			@Override
 			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
 				if (e.getSource() == allChkLb) {
 					if (!allChkCb.getState()) { // 전체동의 CB false 상태
 						if (!agmCb1.getState() || !agmCb2.getState() || !agmCb3.getState()) { // 한 개라도 체크박스 false 상태일 때
@@ -435,6 +422,23 @@ public class PaymentFrame extends JFrame implements ActionListener {
 						System.out.println(check);
 					}
 				}
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
 			}
 		});
 
@@ -529,7 +533,8 @@ public class PaymentFrame extends JFrame implements ActionListener {
 		setResizable(false);// 창의 크기를 변경하지 못하게
 		setLocationRelativeTo(null);// 창이 가운데 나오게
 		setLayout(null);// 레이아웃을 내맘대로 설정가능하게 해줌.
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// JFrame이 정상적으로 종료되게
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);//창 닫을 때 메인화면 같이 안 닫히게..3월25일 박인화수정
+
 		
 		validate();
 		repaint();
