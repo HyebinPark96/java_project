@@ -336,7 +336,7 @@ public class ReservationAdmin {
 					JOptionPane.showMessageDialog(null, "종료일이 시작일보다 빠를 수 없습니다.");
 					
 				} else {
-					if (mgr.resChk(r_room, sqlStartDate, sqlEndDate)) { // 중복 일정 존재하는 경우
+					if (mgr.resChk(r_room, sqlStartDate, sqlEndDate, Integer.parseInt(res_no))) { // 중복 일정 존재하는 경우
 						System.out.println("룸 번호 : " + r_room + " 시작날짜 : " + sqlStartDate + ", 종료날짜 : " + sqlEndDate);
 						System.out.println("[ReservationAdmin] 기존예약존재");
 						JOptionPane.showMessageDialog(null, "해당 일정은 예약이 불가능합니다.");

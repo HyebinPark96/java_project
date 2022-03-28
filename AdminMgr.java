@@ -110,7 +110,7 @@ public class AdminMgr {
 	}
 	
 	//기존 예약 체크
-	public boolean resChk(String r_room, java.sql.Date startDate, java.sql.Date endDate) {
+	public boolean resChk(String r_room, java.sql.Date startDate, java.sql.Date endDate, int res_no) {
 		
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -124,14 +124,15 @@ public class AdminMgr {
 			sql = "SELECT * " 
 					+ "FROM reservation " 
 					+ "WHERE (r_room = ?) AND (((?<=enddate) AND (?>=startdate)) "
-					+ "OR((?<=enddate) AND (?>=startdate)));";
+					+ "OR((?<=enddate) AND (?>=startdate))) AND res_no != ?;";
 			pstmt = con.prepareStatement(sql);
 			
 			pstmt.setString(1, r_room); // 1은 첫번째 ?를 의미
 			pstmt.setDate(2, startDate); // 2은 두번째 ?를 의미
 			pstmt.setDate(3, startDate); // 3은 세번째 ?를 의미
-			pstmt.setDate(4, endDate); // 4은 세번째 ?를 의미
-			pstmt.setDate(5, endDate); // 5은 세번째 ?를 의미
+			pstmt.setDate(4, endDate); // 4은 네번째 ?를 의미
+			pstmt.setDate(5, endDate); // 5은 다섯번째 ?를 의미
+			pstmt.setInt(6, res_no); // 6은 여섯번째 ?를 의미
 			
 			rs = pstmt.executeQuery();
 			
