@@ -385,59 +385,78 @@ public class ReservationAWT {
 				String rsEDate = rsEDateTf.getText().trim().replaceAll("[^0-9]", ""); // 선택 종료일자
 				System.out.println("선택하신 룸 : " + rsRoom + "\n" + "시작날짜 : " + rsSDate + "\n" + "종료날짜 : " + rsEDate + "\n");
 				
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); // Date형식으로 바꾸는 클래스
-				
-				try {
-					// String -> java.util.date
-					utilStartDate = sdf.parse(rsSDate); 
-					utilEndDate = sdf.parse(rsEDate); 
-
-					// java.util.date -> java.sql.date 변환	
-					java.sql.Date sqlStartDate = new java.sql.Date(utilStartDate.getTime());
-					java.sql.Date sqlEndDate = new java.sql.Date(utilEndDate.getTime());													
+				if(rsSDate.trim().length() ==0 || rsEDate.trim().length()==0) {
+					JOptionPane.showMessageDialog(null, "일정을 선택해주세요.");
+				} else {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); // Date형식으로 바꾸는 클래스
 					
-					
-					if (rsMgr2.dateChk(Integer.parseInt(rsRoom), sqlStartDate, sqlEndDate) /* true 반환 -> 중복일정 존재한다는 의미 */) {
-						System.out.println("중복되는 일정이 있으므로 선택하신 일정이 모두 예약취소 되었습니다. 다시 선택해주십시오.");
-						JOptionPane.showMessageDialog(null, "중복되는 일정이 있으므로 선택하신 일정이 모두 예약취소 되었습니다. 다시 선택해주십시오.");
-						
-						check = 0;
-						
-					} else { /*false 반환 -> 중복일정 존재하지 않는다는 의미*/
-						int headcount = Integer.parseInt(rsHeadcountTf.getText().trim());
-						// DB와 중복되지 않는 날짜 선택했다면 false 반환
+					try {
+						// String -> java.util.date
+						utilStartDate = sdf.parse(rsSDate); 
+						utilEndDate = sdf.parse(rsEDate); 
 
-						// 결제 전 단계인 예약파트에서 결제하기 버튼 누르면 무조건 결제 전 상태 셋팅됨
-						r_status = "결제 전";
+						// java.util.date -> java.sql.date 변환	
+						java.sql.Date sqlStartDate = new java.sql.Date(utilStartDate.getTime());
+						java.sql.Date sqlEndDate = new java.sql.Date(utilEndDate.getTime());													
 						
-						// 위아래버튼 클릭 안했다면 headcount = 1; 기본셋팅, 클릭했으면 값 설정되어 있음
-						// 그러므로 p_cost만 셋팅하면 된다.
-						int p_cost = rsMgr2.costChk(Integer.parseInt(rsRoom)); // 선택 룸 가격 가져오기
-						System.out.println(p_cost + ": 예약하신 룸의 1박당 가격입니다.");
+						
+						if (rsMgr2.dateChk(Integer.parseInt(rsRoom), sqlStartDate, sqlEndDate) /* true 반환 -> 중복일정 존재한다는 의미 */) {
+							System.out.println("중복되는 일정이 있으므로 선택하신 일정이 모두 예약취소 되었습니다. 다시 선택해주십시오.");
+							JOptionPane.showMessageDialog(null, "중복되는 일정이 있으므로 선택하신 일정이 모두 예약취소 되었습니다. 다시 선택해주십시오.");
+							
+							check = 0;
+							
+						} else { /*false 반환 -> 중복일정 존재하지 않는다는 의미*/
+							int headcount = Integer.parseInt(rsHeadcountTf.getText().trim());
+							// DB와 중복되지 않는 날짜 선택했다면 false 반환
 
-						// DB INSERT
-						rsMgr2.InsertDate(userId, Integer.parseInt(rsRoom), sqlStartDate, sqlEndDate, headcount, r_status, p_cost);
-						
-						check = 1;
-						
-						try {
-							JOptionPane.showMessageDialog(null, sqlStartDate + " ~ " + sqlEndDate + " : 일정이 무사히 예약되셨습니다. 결제창으로 넘어갑니다.");
-							System.out.println(sqlStartDate + " ~ " + sqlEndDate + " : 일정이 무사히 예약되셨습니다. 결제창으로 넘어갑니다.");
-						} catch (Exception e2) {
-							e2.printStackTrace();
+							// 결제 전 단계인 예약파트에서 결제하기 버튼 누르면 무조건 결제 전 상태 셋팅됨
+							r_status = "결제 전";
+							
+							// 위아래버튼 클릭 안했다면 headcount = 1; 기본셋팅, 클릭했으면 값 설정되어 있음
+							// 그러므로 p_cost만 셋팅하면 된다.
+							int p_cost = rsMgr2.totalCostChk(Integer.parseInt(rsRoom)); // 선택 룸 가격 가져오기
+							System.out.println(p_cost + ": 예약하신 룸의 1박당 가격입니다.");
+							
+							
+							// 1박 가격에 곱하는 예약일수 차이 구하기
+							Calendar calStartDate = Calendar.getInstance();
+							calStartDate.setTime(utilStartDate);
+
+							Calendar calEndDate = Calendar.getInstance();
+							calEndDate.setTime(utilEndDate); //특정 일자
+							
+							long diffSec = (calEndDate.getTimeInMillis() - calStartDate.getTimeInMillis()) / 1000;
+							int diffDays = (int)diffSec / (24*60*60); //일자수 차이
+							
+							
+							// DB INSERT
+							rsMgr2.InsertDate(userId, Integer.parseInt(rsRoom), sqlStartDate, 
+									sqlEndDate, headcount, r_status, diffDays*p_cost);
+							
+							check = 1;
+							
+							try {
+								JOptionPane.showMessageDialog(null, sqlStartDate + " ~ " + sqlEndDate + " : 일정이 무사히 예약되셨습니다. 결제창으로 넘어갑니다.");
+								System.out.println(sqlStartDate + " ~ " + sqlEndDate + " : 일정이 무사히 예약되셨습니다. 결제창으로 넘어갑니다.");
+							} catch (Exception e2) {
+								e2.printStackTrace();
+							}
+
 						}
 
-					}
+						if (check == 1) {
+							PaymentFrame cpf = new PaymentFrame(userId);
+							cpf.setVisible(true);
+							jf.dispose();
+						}
 
-					if (check == 1) {
-						PaymentFrame cpf = new PaymentFrame(userId);
-						cpf.setVisible(true);
-						jf.dispose();
+					} catch (ParseException e1) {
+						e1.printStackTrace();
 					}
-
-				} catch (ParseException e1) {
-					e1.printStackTrace();
+					
 				}
+
 			}
 		});
 

@@ -128,42 +128,6 @@ public class ReservationMgr {
 		}
 		return flagForDateDup;
 	}
-
-	
-	
-	// (테스트)DELETE : 날짜 빼기
-		public boolean deleteDate(int room, java.sql.Date startDate, java.sql.Date endDate) {
-			Connection con = null;
-			PreparedStatement pstmt = null;
-			String sql;
-			boolean flagForDeleteDate = false;
-
-			try {
-				con = pool.getConnection();
-				
-				// 쿼리문
-				sql = "DELETE FROM reservation " 
-				+ "WHERE r_room = ? AND startdate = ? AND enddate = DATE_ADD(?, INTERVAL 1 DAY)"; // 대문자써서 안됐고, room이라 해서 안돼씀
-				
-				pstmt = con.prepareStatement(sql);
-
-				pstmt.setInt(1, room);
-				pstmt.setDate(2, startDate);
-				pstmt.setDate(3, endDate);
-
-				// executeUpdate : insert, update, delete 실행문
-				int rsDeleteDate = pstmt.executeUpdate();
-				
-				// 적용된 레코드 개수 : 에러 및 처리 : 0, 정상적인 처리 : 1 (1행씩 넣을거니까)
-				if (rsDeleteDate == 1)
-					flagForDeleteDate = true; // 중복된 값이 있어야 삭제가능하다는 뜻이며, true 반환
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				pool.freeConnection(con, pstmt);
-			}
-			return flagForDeleteDate;
-		} // --- (테스트) 날짜 넣기
 	
 
 		// 룸별 최대수용인원과 예약인원 체크
@@ -201,8 +165,8 @@ public class ReservationMgr {
 			return r_capacity;
 		}
 
-		// 룸별 1박당가격 체크
-		public int costChk(int room) {
+		// (룸별 1박당 가격 * 예약일수) 합계 가격 체크 >> 이클립스에서 diffDays 구해서 곱하기
+		public int totalCostChk(int room) {
 			Connection con = null;
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;

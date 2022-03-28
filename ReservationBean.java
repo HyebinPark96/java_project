@@ -10,8 +10,8 @@ public class ReservationBean/* 테이블명+Bean */ {
 	// 컬럼별 private 변수 선언
 	private String id;
 	private String r_room;
-	private String startdate;
-	private String enddate;
+	private java.sql.Date startdate;
+	private java.sql.Date enddate;
 	private String headcount;
 	private String r_status;
 	private int p_cost;
@@ -23,8 +23,8 @@ public class ReservationBean/* 테이블명+Bean */ {
 	}
 
 	// 매개변수 생성자
-	public ReservationBean(String id, String r_room, String startdate,
-			String enddate, String headcount, String r_status,
+	public ReservationBean(String id, String r_room, java.sql.Date startdate,
+			java.sql.Date enddate, String headcount, String r_status,
 			int p_cost,String res_no) {
 		
 		this.id = id;
@@ -56,19 +56,19 @@ public class ReservationBean/* 테이블명+Bean */ {
 		this.r_room = r_room;
 	}
 
-	public String getStartdate() {
+	public java.sql.Date getStartdate() {
 		return startdate;
 	}
 
-	public void setStartdate(String startdate) {
+	public void setStartdate(java.sql.Date startdate) {
 		this.startdate = startdate;
 	}
 
-	public String getEnddate() {
+	public java.sql.Date getEnddate() {
 		return enddate;
 	}
 
-	public void setEnddate(String enddate) {
+	public void setEnddate(java.sql.Date enddate) {
 		this.enddate = enddate;
 	}
 

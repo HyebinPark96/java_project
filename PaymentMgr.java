@@ -57,10 +57,9 @@ public class PaymentMgr {
 				
 				//쿼리문
 				// GROUP BY의 위치는 WHERE 다음, HAVING 전의 자리
-				sql = "SELECT SUM(p_cost) " + 
+				sql = "SELECT p_cost " + 
 				      "FROM reservation " +
-				      "WHERE id = ? AND r_status = ? " +
-				      "GROUP BY id ";
+				      "WHERE id = ? AND r_status = ? ";
 				pstmt = con.prepareStatement(sql);
 				
 				String r_status = "결제 전";

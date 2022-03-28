@@ -1,5 +1,3 @@
-// 자릿수조건도 넣으면 좋을듯 
-
 package javaproject;
 
 import java.awt.Button;
@@ -433,12 +431,24 @@ public class CardPaymentFrame extends JFrame {
 			
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange()==ItemEvent.SELECTED) {
+				if (e.getStateChange()==ItemEvent.SELECTED) {// 전체동의 체크박스 선택 
 					chk2.setSelected(true);
 					chk3.setSelected(true);
 					chk4.setSelected(true);
 					chk5.setSelected(true);
-					chk6.setSelected(true);	
+					chk6.setSelected(true);
+				} else if (e.getStateChange()==ItemEvent.DESELECTED) { // 전체동의 체크박스 선택 해제
+					// 최소 한개 ~ 모든 체크박스가 선택되지 않은 상태라면
+					if (!chk2.isSelected() || !chk3.isSelected() || !chk4.isSelected() || !chk5.isSelected() || !chk6.isSelected()) {
+						chk1.setSelected(false); // 전체동의 체크박스 선택 해제
+					} else {
+						// 모든 체크박스가 선택된 상태라면
+						chk2.setSelected(false);
+						chk3.setSelected(false);
+						chk4.setSelected(false);
+						chk5.setSelected(false);
+						chk6.setSelected(false);
+					}
 				}		
 			}
 		});
@@ -450,6 +460,10 @@ public class CardPaymentFrame extends JFrame {
 			public void itemStateChanged(ItemEvent e) {
 				if(e.getStateChange() == ItemEvent.DESELECTED) {
 					chk1.setSelected(false);
+				} else if(e.getStateChange() == ItemEvent.SELECTED) {
+					if(chk2.isSelected() && chk3.isSelected() && chk4.isSelected() && chk5.isSelected() && chk6.isSelected()) {
+						chk1.setSelected(true);
+					}
 				}
 			}
 		});
@@ -460,6 +474,10 @@ public class CardPaymentFrame extends JFrame {
 			public void itemStateChanged(ItemEvent e) {
 				if(e.getStateChange() == ItemEvent.DESELECTED) {
 					chk1.setSelected(false);
+				} else if(e.getStateChange() == ItemEvent.SELECTED) {
+					if(chk2.isSelected() && chk3.isSelected() && chk4.isSelected() && chk5.isSelected() && chk6.isSelected()) {
+						chk1.setSelected(true);
+					}
 				}
 			}
 		});
@@ -470,6 +488,10 @@ public class CardPaymentFrame extends JFrame {
 			public void itemStateChanged(ItemEvent e) {
 				if(e.getStateChange() == ItemEvent.DESELECTED) {
 					chk1.setSelected(false);
+				} else if(e.getStateChange() == ItemEvent.SELECTED) {
+					if(chk2.isSelected() && chk3.isSelected() && chk4.isSelected() && chk5.isSelected() && chk6.isSelected()) {
+						chk1.setSelected(true);
+					}
 				}
 			}
 		});
@@ -480,6 +502,10 @@ public class CardPaymentFrame extends JFrame {
 			public void itemStateChanged(ItemEvent e) {
 				if(e.getStateChange() == ItemEvent.DESELECTED) {
 					chk1.setSelected(false);
+				} else if(e.getStateChange() == ItemEvent.SELECTED) {
+					if(chk2.isSelected() && chk3.isSelected() && chk4.isSelected() && chk5.isSelected() && chk6.isSelected()) {
+						chk1.setSelected(true);
+					}
 				}
 			}
 		});
@@ -490,6 +516,10 @@ public class CardPaymentFrame extends JFrame {
 			public void itemStateChanged(ItemEvent e) {
 				if(e.getStateChange() == ItemEvent.DESELECTED) {
 					chk1.setSelected(false);
+				} else if(e.getStateChange() == ItemEvent.SELECTED) {
+					if(chk2.isSelected() && chk3.isSelected() && chk4.isSelected() && chk5.isSelected() && chk6.isSelected()) {
+						chk1.setSelected(true);
+					}
 				}
 			}
 		});		
@@ -508,13 +538,14 @@ public class CardPaymentFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-			if(mmTf.getText().isEmpty() || yyTf.getText().isEmpty()) {
+			if(mmTf.getText().length() != 2 || yyTf.getText().length() != 2) {
 				JOptionPane.showMessageDialog(null, "카드 유효기간을 입력하세요.");
-			} else if(c_pwdTf.getText().isEmpty()) {
+			} else if(c_pwdTf.getText().length() != 2) {
 				JOptionPane.showMessageDialog(null, "카드 비밀번호를 입력하세요.");
-			} else if(idNumTf1.getText().isEmpty() || idNumTf2.getText().isEmpty() ) {
+			} else if(idNumTf1.getText().length() != 6  || idNumTf2.getText().length() != 7  ) {
 				JOptionPane.showMessageDialog(null, "주민등록 번호를 입력하세요.");
-			} else if(c_numTf1.getText().isEmpty() || c_numTf2.getText().isEmpty() || c_numTf3.getText().isEmpty() || c_numTf4.getText().isEmpty()) {
+			} else if(c_numTf1.getText().length() != 4 || c_numTf2.getText().length() != 4 
+					|| c_numTf3.getText().length() != 4 || c_numTf4.getText().length() != 4) {
 				JOptionPane.showMessageDialog(null, "카드 번호를 입력하세요.");
 			} else if (!chk2.isSelected()||!chk3.isSelected()||!chk4.isSelected()||!chk5.isSelected()||!chk6.isSelected()) { 
 				JOptionPane.showMessageDialog(null, "모든 약관에 동의해주세요.");

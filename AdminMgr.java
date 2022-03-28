@@ -110,12 +110,12 @@ public class AdminMgr {
 	}
 	
 	//기존 예약 체크
-	public boolean resChk(String r_room, String startdate, String enddate) {
+	public boolean resChk(String r_room, java.sql.Date startDate, java.sql.Date endDate) {
 		
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String sql = null;
+		String sql;
 		boolean flagForResChk = false;
 
 		try {
@@ -128,10 +128,10 @@ public class AdminMgr {
 			pstmt = con.prepareStatement(sql);
 			
 			pstmt.setString(1, r_room); // 1은 첫번째 ?를 의미
-			pstmt.setString(2, startdate); // 2은 두번째 ?를 의미
-			pstmt.setString(3, startdate); // 3은 세번째 ?를 의미
-			pstmt.setString(4, enddate); // 4은 세번째 ?를 의미
-			pstmt.setString(5, enddate); // 5은 세번째 ?를 의미
+			pstmt.setDate(2, startDate); // 2은 두번째 ?를 의미
+			pstmt.setDate(3, startDate); // 3은 세번째 ?를 의미
+			pstmt.setDate(4, endDate); // 4은 세번째 ?를 의미
+			pstmt.setDate(5, endDate); // 5은 세번째 ?를 의미
 			
 			rs = pstmt.executeQuery();
 			
@@ -154,14 +154,16 @@ public class AdminMgr {
 		boolean flagForResUpdt = false;
 		try {
 			con = pool.getConnection();
-			sql = "UPDATE reservation SET r_room =?, startdate =?, enddate =?, headcount =? "
+			sql = "UPDATE reservation SET r_room =?, startdate =?, enddate =?, headcount =?, p_cost =? "
 					+ "WHERE res_no = ?";//values (데이터값들)
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, bean.getR_room());//1은 첫번째 ?를 의미
-			pstmt.setString(2, bean.getStartdate());//2은 두번째 ?를 의미
-			pstmt.setString(3, bean.getEnddate());//3은 세번째 ?를 의미
+			pstmt.setDate(2, bean.getStartdate());//2은 두번째 ?를 의미
+			pstmt.setDate(3, bean.getEnddate());//3은 세번째 ?를 의미
 			pstmt.setString(4, bean.getHeadcount());//4은 네번째 ?를 의미
-			pstmt.setString(5, bean.getRes_no());
+			pstmt.setInt(5, bean.getP_cost());
+			pstmt.setString(6, bean.getRes_no());
+			
 			//적용된 레코드 개수 : 에러 및 처리 : 0, 정상적인 처리 : 1 
 			int cnt = pstmt.executeUpdate();
 			if(cnt==1) flagForResUpdt = true;
