@@ -1,4 +1,4 @@
-/*-- 메인화면 | 마지막 수정날짜: 2022-03-23 | 마지막 수정인: 김서하--*/
+/*-- 메인화면 | 마지막 수정날짜: 2022-03-27 | 마지막 수정인: 김서하--*/
 package javaproject;
 
 import java.awt.Color;
@@ -55,7 +55,7 @@ public class MainPage {
 		} else {
 			frame.setTitle("Stay With Us :: Reservation Program (" + userId + " 님)");
 		}
-		System.out.println(userId + "님이 이용중입니다.");
+//		System.out.println(userId + "님이 이용중입니다.");
 	
 		
 		//JLabel 이미지추가
@@ -90,7 +90,6 @@ public class MainPage {
 		loginBtn.setFont(new Font("맑은 고딕", Font.BOLD, 12));
 		loginBtn.setBackground(Color.WHITE);
 		loginBtn.setBounds(699, 10, 95, 23);
-		frame.getContentPane().add(loginBtn);
 		
 		if (userId == null) { // 비회원 (null)
 			loginBtn.setEnabled(true);
@@ -172,17 +171,43 @@ public class MainPage {
 		
 		//로그인id mode값으로 관리자버튼 보이기 선택
 		if(mgr.modeChk(userId)==1) {
-			System.out.println("mode:"+mgr.modeChk(userId)+" 관리자 로그인");
+			System.out.println("[MainPage] 관리자(" + userId + ") 로그인");
 			frame.getContentPane().add(adminBtn);
+		}else if (userId==null) {
+			System.out.println("[MainPage] 비회원(" + userId + ") 접속");
 		}else if (mgr.modeChk(userId)==0) {
-			System.out.println("mode:"+mgr.modeChk(userId)+" 사용자 로그인");
+			System.out.println("[MainPage] 사용자(" + userId + ") 로그인");
 		}
-	}
-	
-	//생성자
-	public MainPage() {
-		this(null);	
+		
+		
+		// 로그아웃 버튼 
+		JButton logoutBtn = new JButton("로그아웃");
+		logoutBtn.setFont(new Font("맑은 고딕", Font.BOLD, 12));
+		logoutBtn.setBackground(Color.WHITE);
+		logoutBtn.setBounds(699, 10, 95, 23);
+		
+		// 비회원일 경우에는 로그인 버튼 보이기, 회원(로그인완료)일 경우에는 로그아웃 버튼 보이기
+		if(userId==null) {
+			frame.getContentPane().add(loginBtn);
+		}else {
+			frame.getContentPane().add(logoutBtn);
+		}
+		
+		// 로그아웃 버튼 액션
+		logoutBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new MainPage();
+				frame.dispose();
+			}
+		});
+
 	}
 
+	// 생성자
+	public MainPage() {
+		this(null);
+	}
 
 }

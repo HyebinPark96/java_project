@@ -19,6 +19,7 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -31,9 +32,9 @@ public class ReservationAdmin {
 	JFrame jf = new JFrame();
 	
 	private JPanel p1;
-	private JLabel titleLb, res_noLb, idLb, r_roomLb, sdLb, edLb, hcLb, r_statLb, p_costLb; 
-	private JButton uptBtn, delBtn, homeBtn;
-	private JTextField idTf, r_roomTf, sdTf, edTf, hcTf, r_statTf, p_costTf, res_noTf;
+	private JLabel titleLb, res_noLb, idLb, r_roomLb, sdLb, edLb, hcLb, r_statLb, p_costLb, searchLb; 
+	private JButton uptBtn, delBtn, homeBtn, searchBtn, freshBtn;
+	private JTextField idTf, r_roomTf, sdTf, edTf, hcTf, r_statTf, p_costTf, res_noTf, searchTf;
 	private DefaultTableModel model;
 	@SuppressWarnings("rawtypes")
 	private Vector title, result; 
@@ -244,10 +245,32 @@ public class ReservationAdmin {
 		delBtn.setBackground(Color.white);
 		p1.add(delBtn);		
 
+		// 검색 라벨
+		searchLb = new JLabel("예약자 ID를 입력하세요");
+		p1.add(searchLb);
+		searchLb.setFont(f3);
+		searchLb.setBounds(450, 603, 250, 20);
+
+		// 검색 텍스트필드
+		searchTf = new JTextField();
+		p1.add(searchTf);
+		searchTf.setBounds(585, 605, 150, 20);
+
+		// 검색 버튼
+		searchBtn = new JButton("검색");
+		p1.add(searchBtn);
+		searchBtn.setFont(f2);
+		searchBtn.setBounds(740, 605, 60, 20);
+		searchBtn.setForeground(Color.white);
+		searchBtn.setBackground(Color.black);
 		
-		
-		
-		
+		// 새로고침 버튼
+		freshBtn = new JButton("새로고침");
+		p1.add(freshBtn);
+		freshBtn.setFont(f2);
+		freshBtn.setBounds(915, 605, 85, 20);
+		freshBtn.setForeground(Color.black);
+		freshBtn.setBackground(Color.white);
 		
 		/*기능 구현*/
 		
@@ -275,7 +298,7 @@ public class ReservationAdmin {
 				r_statTf.setText(r_stat);
 				p_costTf.setText(p_cost);
 				res_noTf.setText(res_no);
-				System.out.println("(ResAdmin)선택된 예약번호:" + res_no);
+				System.out.println("[ReservationAdmin]선택된 예약번호:" + res_no);
 				
 			}
 		}); 
@@ -292,17 +315,19 @@ public class ReservationAdmin {
 				String res_no = res_noTf.getText();
 				ReservationBean bean = new ReservationBean();
 				
-				if(mgr.resChk(r_room, startdate)) {
-					System.out.println("기존예약존재");
+				if(mgr.resChk(r_room, startdate, enddate)) {
+					System.out.println("[ReservationAdmin] 기존예약존재");
+					JOptionPane.showMessageDialog(null, "해당 일정은 예약이 불가능합니다.");
 				}else {
-					System.out.println("기존예약없음");
+					System.out.println("[ReservationAdmin] 기존예약없음");
 					bean.setR_room(r_room);
 					bean.setStartdate(startdate);
 					bean.setEnddate(enddate);
 					bean.setHeadcount(headcount);
 					bean.setRes_no(res_no);
 					mgr.resUpdt(bean);
-					System.out.println("예약수정완료");
+					System.out.println("[ReservationAdmin] 예약번호:" + res_no + " 예약수정완료");
+					JOptionPane.showMessageDialog(null, "예약수정이 성공적으로 처리되었습니다.");
 					//수정후 DB값 새로불러오기
 					@SuppressWarnings("rawtypes")
 					Vector result = mgr.selectAll();
@@ -314,7 +339,7 @@ public class ReservationAdmin {
 		});
 		
 		
-		//예약삭제: 위에서 텍필로 끌어온 값 -> AdminMgr로 써서 삭제
+		// 예약삭제: 위에서 텍필로 끌어온 값 -> AdminMgr로 써서 삭제
 		delBtn.addActionListener(new ActionListener() {
 			
 			@Override
@@ -330,12 +355,35 @@ public class ReservationAdmin {
 			} 
 		});
 		
-		//홈버튼 클릭 액션: 메인으로 이동
+		// 검색버튼: id의 예약내역만 출력
+		searchBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String id = searchTf.getText();
+				System.out.println(searchTf.getText());
+				mgr.selectId(id);
+				result = mgr.selectId(id);
+				model.setDataVector(result, title);
+			}
+		});
+		
+		// 새로고침 버튼: 다시 전체 출력
+		freshBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Vector result = mgr.selectAll();
+				model.setDataVector(result, title);
+			}
+		});
+		
+		// 홈버튼 클릭 액션: 메인으로 이동
 		homeBtn.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new MainPage();
+				new MainPage(userId);
 				jf.dispose();
 				
 			}

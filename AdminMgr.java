@@ -1,4 +1,4 @@
-/* 관리자페이지 예약관리 매니저 | 마지막 수정날짜: 2022-03-25 | 마지막 작성자: 김서하 */
+/* 관리자페이지 예약관리 매니저 | 마지막 수정날짜: 2022-03-27 | 마지막 수정인: 김서하 */
 package javaproject;
 
 import java.sql.Connection;
@@ -110,7 +110,7 @@ public class AdminMgr {
 	}
 	
 	//기존 예약 체크
-	public boolean resChk(String r_room, String startdate) {
+	public boolean resChk(String r_room, String startdate, String enddate) {
 		
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -121,10 +121,17 @@ public class AdminMgr {
 		try {
 			con = pool.getConnection();
 			// 쿼리문
-			sql = "SELECT r_room, startdate FROM reservation WHERE r_room =? and startdate =?";
+			sql = "SELECT * " 
+					+ "FROM reservation " 
+					+ "WHERE (r_room = ?) AND (((?<=enddate) AND (?>=startdate)) "
+					+ "OR((?<=enddate) AND (?>=startdate)));";
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1,r_room);
-			pstmt.setString(2,startdate);
+			
+			pstmt.setString(1, r_room); // 1은 첫번째 ?를 의미
+			pstmt.setString(2, startdate); // 2은 두번째 ?를 의미
+			pstmt.setString(3, startdate); // 3은 세번째 ?를 의미
+			pstmt.setString(4, enddate); // 4은 세번째 ?를 의미
+			pstmt.setString(5, enddate); // 5은 세번째 ?를 의미
 			
 			rs = pstmt.executeQuery();
 			
@@ -165,8 +172,60 @@ public class AdminMgr {
 		}
 		return flagForResUpdt;
 	}
-	
-	}
+
+	// SELECT: ReservationAdmin 선택된 아이디 예약내역만 조회
+	public Vector selectId(String id) {
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		Vector data = new Vector<>();
+		data.clear();
+
+		try {
+			con = pool.getConnection();
+			// 쿼리문
+			sql = "select * from reservation where id = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				Vector in = new Vector<String>(); // 1개의 레코드 저장하는 벡터 생성
+
+//				String id = rs.getString(1);
+				String r_room = rs.getString(2);
+				String startdate = rs.getString(3);
+				String enddate = rs.getString(4);
+				String headcount = rs.getString(5);
+				String r_status = rs.getString(6);
+				String p_cost = rs.getString(7);
+				String res_no = rs.getString(8);
+				System.out.println("백터에넣기");
+				// 벡터에 각각의 값 추가
+
+				in.add(id);
+				in.add(r_room);
+				in.add(startdate);
+				in.add(enddate);
+				in.add(headcount);
+				in.add(r_status);
+				in.add(p_cost);
+				in.add(res_no);
+
+				// 전체 데이터를 저장하는 벡터에 in(1명의 데이터 저장) 벡터 추가
+				data.add(in);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+		return data;
+	}// -- 특정 id 예약내역만 조회
+
+}
 
 	
 

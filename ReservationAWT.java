@@ -593,27 +593,12 @@ public class ReservationAWT {
 						// 일자 시작하는 날부터
 						if (sDayBtn[i].getText().length() > 0) {
 							if (e.getSource() == sDayBtn[i]) {
-								if (sLabel.getText().length() == 8
-										&& sDayBtn[i].getText().length() == 1 /* 1. 두자리 월 + 한자리 일자 경우 */) {
+								if (sDayBtn[i].getText().length() == 1) { //한자리 일자
 									rsSDateTf.setText(sLabel.getText()
 											+ String.format("%02d", Integer.parseInt(sDayBtn[i].getText())) + "일");
-								} else if (sLabel.getText().length() == 8
-										&& sDayBtn[i].getText().length() == 2/* 2. 두자리 월 + 두자리 일자 경우 */) {
+								} else { // 두자리 일자
 									rsSDateTf.setText(sLabel.getText() + sDayBtn[i].getText() + "일");
-								} else if (sLabel.getText().length() == 7
-										&& sDayBtn[i].getText().length() == 1/* 3. 한자리 월 + 한자리 일자 경우 */) {
-									rsSDateTf.setText(sLabel.getText().substring(0, 4)/* 년도 */ + "년"
-											+ String.format("%02d", Integer
-													.parseInt(sLabel.getText().substring(5, 6)))/* 월 두자리수 맞춰서 가져오기 */
-											+ "월" + String.format("%02d", Integer.parseInt(sDayBtn[i].getText()))
-											+ "일");
-								} else if (sLabel.getText().length() == 7
-										&& sDayBtn[i].getText().length() == 2) { /* 4. 한자리 월 + 두자리 일자 경우 */
-									rsSDateTf.setText(sLabel.getText().substring(0, 4)/* 년도 */ + "년"
-											+ String.format("%02d", Integer
-													.parseInt(sLabel.getText().substring(5, 6)))/* 월 두자리수 맞춰서 가져오기 */
-											+ "월" + sDayBtn[i].getText() + "일");
-								}
+								} 
 							}
 						}
 					}
@@ -663,28 +648,22 @@ public class ReservationAWT {
 						// 일자 시작하는 날부터
 						if (eDayBtn[i].getText().length() > 0) {
 							if (e.getSource() == eDayBtn[i]) {
-
-								if (eLabel.getText().length() == 8
-										&& eDayBtn[i].getText().length() == 1 /* 1. 두자리 월 + 한자리 일자 경우 */) {
+								if (eDayBtn[i].getText().length() == 1) { // 한자리 일자
 									rsEDateTf.setText(eLabel.getText()
 											+ String.format("%02d", Integer.parseInt(eDayBtn[i].getText())) + "일");
-								} else if (eLabel.getText().length() == 8
-										&& eDayBtn[i].getText().length() == 2/* 2. 두자리 월 + 두자리 일자 경우 */) {
+								} else { // 두자리 일자
 									rsEDateTf.setText(eLabel.getText() + eDayBtn[i].getText() + "일");
-								} else if (eLabel.getText().length() == 7
-										&& eDayBtn[i].getText().length() == 1/* 3. 한자리 월 + 한자리 일자 경우 */) {
-									rsEDateTf.setText(eLabel.getText().substring(0, 4)/* 년도 */ + "년"
-											+ String.format("%02d", Integer
-													.parseInt(eLabel.getText().substring(5, 6)))/* 두자리수 맞춰서 가져오기 */
-											+ "월" + String.format("%02d", Integer.parseInt(eDayBtn[i].getText()))
-											+ "일");
-								} else if (eLabel.getText().length() == 7
-										&& eDayBtn[i].getText().length() == 2) { /* 4. 한자리 월 + 두자리 일자 경우 */
-									rsEDateTf.setText(eLabel.getText().substring(0, 4)/* 년도 */ + "년"
-											+ String.format("%02d", Integer.parseInt(eLabel.getText().substring(5, 6)))
-											+ "월" + eDayBtn[i].getText() + "일");
 								}
-
+								
+								if(rsSDateTf.getText().trim().length()>0) { // 시작일정 골라놨을 때 종료일자와 비교가능 
+									int rsSDateInt = Integer.parseInt(rsSDateTf.getText().trim().replaceAll("[^0-9]", "")); // 선택 시작일자
+									int rsEDateInt = Integer.parseInt(rsEDateTf.getText().trim().replaceAll("[^0-9]", "")); // 선택 종료일자
+									
+									if(rsEDateInt <= rsSDateInt) { // 종료일자가 시작일자보다 빠르다면(8자리 숫자로 봤을 때 작다면)
+										rsEDateTf.setText(""); // 종료일자 초기화
+										JOptionPane.showMessageDialog(null, "종료일자가 시작일자보다 같거나 빠를 수 없습니다.");
+									}
+								}
 							}
 						}
 					}
