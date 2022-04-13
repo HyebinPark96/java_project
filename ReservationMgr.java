@@ -177,7 +177,7 @@ public class ReservationMgr {
 				con = pool.getConnection();
 
 				// Äõ¸®¹®
-				sql = "SELECT p_cost " 
+				sql = "SELECT cost " 
 				+ "FROM room " 
 				+ "WHERE r_room = ?";
 

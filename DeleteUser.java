@@ -200,6 +200,14 @@ public class DeleteUser {
 			}
 		});
 		
+		// 내정보수정버튼 액션 : 내정보수정 이동 
+		updateBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new UpdateUser(userId);
+				jf.dispose();
+			}
+		});
 }
 
 	// 생성자

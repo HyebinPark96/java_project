@@ -31,7 +31,7 @@ import javax.swing.WindowConstants;
 
 import javaproject.CalendarFunc;
 
-public class ReservationAWT {
+public class ReservationFrame {
 	private JFrame jf;
 	private String r_status;
 	private int check; // insert 되면 1, delete 되면 0 셋팅됨 -> 1이면 결제창 열기
@@ -43,12 +43,14 @@ public class ReservationAWT {
 
 	private int sMove;
 	private int eMove;
+	
+	ReservationMgr mgr = new ReservationMgr();
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ReservationAWT reservationAwt = new ReservationAWT();
+					ReservationFrame reservationAwt = new ReservationFrame();
 					reservationAwt.jf.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -58,7 +60,7 @@ public class ReservationAWT {
 	}
 
 	// 생성자
-	public ReservationAWT(String userId) {
+	public ReservationFrame(String userId) {
 		jf = new JFrame();
 		jf.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -104,13 +106,10 @@ public class ReservationAWT {
 		paymentBtn.setCursor(cursor);
 
 		JTextField rsRoomTf = new JTextField();
-		// rsRoomTf.setBackground(lbColor);
 		rsRoomTf.setForeground(c2);
 		JTextField rsSDateTf = new JTextField();
-		// rsSDateTf.setBackground(lbColor);
 		rsSDateTf.setForeground(c2);
 		JTextField rsEDateTf = new JTextField();
-		// rsEDateTf.setBackground(lbColor);
 		rsEDateTf.setForeground(c2);
 
 		JRadioButton roomBtn[];
@@ -157,6 +156,7 @@ public class ReservationAWT {
 		panel6.setBackground(bkColor);
 		panel6.setOpaque(true);
 
+		// 인원수 증가 버튼
 		JButton cPlusBtn = new JButton("증가 (+)");
 		cPlusBtn.setFont(new Font("나눔고딕", Font.BOLD, 18));
 		cPlusBtn.setBackground(c4);
@@ -164,13 +164,15 @@ public class ReservationAWT {
 		cPlusBtn.setCursor(cursor);
 		cPlusBtn.setBorder(BorderFactory.createLineBorder(c4, 8));
 
+		// 인원수 감소 버튼
 		JButton cMinusBtn = new JButton("감소 (-)");
 		cMinusBtn.setFont(new Font("나눔고딕", Font.BOLD, 18));
 		cMinusBtn.setBackground(c4);
 		cMinusBtn.setForeground(c1);
 		cMinusBtn.setCursor(cursor);
 		cMinusBtn.setBorder(BorderFactory.createLineBorder(c4, 8));
-
+		
+		// 시작일자달력과 종료일자달력 before After 버튼
 		JButton sBeforeBtn = new JButton("   Before   ");
 		JButton eBeforeBtn = new JButton("   Before   ");
 		JButton sAfterBtn = new JButton("   After   ");
@@ -185,22 +187,23 @@ public class ReservationAWT {
 		eLabel.setFont(new Font("나눔고딕", Font.BOLD, 18));
 		eLabel.setForeground(c1);
 
+		// 달력 버튼
 		JButton[] sDayBtn = new JButton[49];
 		String[] sDayName = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-
 		JButton[] eDayBtn = new JButton[49];
 		String[] eDayName = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 
+		
+		
+		
 		// CalendarFunction 클래스로부터 sCF 객체 생성
-		CalendarFunc sCF = new CalendarFunc(); // 시작일
-		CalendarFunc eCF = new CalendarFunc(); // 종료일
+		CalendarFunc sCF = new CalendarFunc(); // 시작일 달력 기능
+		CalendarFunc eCF = new CalendarFunc(); // 종료일 달력 기능
 
 		int rsSDate; // DB와 연동될 시작날짜 최종값 (YYYYMMDD)
 		int rsEDate; // DB와 연동될 종료날짜 최종값 (YYYYMMDD)
 		int rsRoom; // DB와 연동될 선택룸 최종값 (101, 102, 201, 202 중 하나)
-		int p_cost;
 
-		ReservationMgr rsMgr2 = new ReservationMgr();
 
 		// Panel 위치 지정
 		jf.add(panel1, "Center");
@@ -327,7 +330,7 @@ public class ReservationAWT {
 				int rsRoom = (Integer.parseInt(rsRoomTf.getText().trim().replaceAll("호", "")));
 
 				// 4. DB연동해서 선택룸의 최대 수용인원 가져오기 (SEELCT r_capacity)
-				int r_capacity = rsMgr2.capacityChk(rsRoom);
+				int r_capacity = mgr.capacityChk(rsRoom);
 
 				// 5. headcount(+1 증가된 인원)과 rsMgr.r_capacity(DB상 룸별 최대 수용인원) 비교
 				if (headcount > r_capacity) { // 예약인원 > 최대 수용인원
@@ -385,41 +388,41 @@ public class ReservationAWT {
 				String rsEDate = rsEDateTf.getText().trim().replaceAll("[^0-9]", ""); // 선택 종료일자
 				System.out.println("선택하신 룸 : " + rsRoom + "\n" + "시작날짜 : " + rsSDate + "\n" + "종료날짜 : " + rsEDate + "\n");
 				
-				if(rsSDate.trim().length() ==0 || rsEDate.trim().length()==0) {
+				if(rsSDate.trim().length() ==0 || rsEDate.trim().length()==0) { // 시작일자 OR 종료일자 미선택
 					JOptionPane.showMessageDialog(null, "일정을 선택해주세요.");
-				} else {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); // Date형식으로 바꾸는 클래스
+				} else { // 시작일자 AND 종료일자 선택
+					// Date형식으로 바꾸는 클래스
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); 
 					
 					try {
 						// String -> java.util.date
 						utilStartDate = sdf.parse(rsSDate); 
 						utilEndDate = sdf.parse(rsEDate); 
 
-						// java.util.date -> java.sql.date 변환	
+						// java.util.date -> java.sql.date 변환 (DB 데이터 다루기 위해)	
 						java.sql.Date sqlStartDate = new java.sql.Date(utilStartDate.getTime());
 						java.sql.Date sqlEndDate = new java.sql.Date(utilEndDate.getTime());													
 						
-						
-						if (rsMgr2.dateChk(Integer.parseInt(rsRoom), sqlStartDate, sqlEndDate) /* true 반환 -> 중복일정 존재한다는 의미 */) {
+						if (mgr.dateChk(Integer.parseInt(rsRoom), sqlStartDate, sqlEndDate) /* true 반환 -> 중복일정 존재한다는 의미 */) {
 							System.out.println("중복되는 일정이 있으므로 선택하신 일정이 모두 예약취소 되었습니다. 다시 선택해주십시오.");
 							JOptionPane.showMessageDialog(null, "중복되는 일정이 있으므로 선택하신 일정이 모두 예약취소 되었습니다. 다시 선택해주십시오.");
 							
-							check = 0;
+							check = 0; // 예약실패와 성공의 구분 변수
 							
 						} else { /*false 반환 -> 중복일정 존재하지 않는다는 의미*/
-							int headcount = Integer.parseInt(rsHeadcountTf.getText().trim());
-							// DB와 중복되지 않는 날짜 선택했다면 false 반환
+							// 위아래버튼 클릭 안했다면 headcount = 1; 기본셋팅, 클릭했으면 값 설정되어 있음
+							int headcount = Integer.parseInt(rsHeadcountTf.getText().trim()); // 최대수용인원 초과하지 않는 인원 가져오기
 
 							// 결제 전 단계인 예약파트에서 결제하기 버튼 누르면 무조건 결제 전 상태 셋팅됨
 							r_status = "결제 전";
 							
-							// 위아래버튼 클릭 안했다면 headcount = 1; 기본셋팅, 클릭했으면 값 설정되어 있음
-							// 그러므로 p_cost만 셋팅하면 된다.
-							int p_cost = rsMgr2.totalCostChk(Integer.parseInt(rsRoom)); // 선택 룸 가격 가져오기
+							
+							// 전체 가격 구하기
+							// 1. 선택 룸 1박 가격 가져오기
+							int p_cost = mgr.totalCostChk(Integer.parseInt(rsRoom)); 
 							System.out.println(p_cost + ": 예약하신 룸의 1박당 가격입니다.");
 							
-							
-							// 1박 가격에 곱하는 예약일수 차이 구하기
+							// 2. 1박 가격에 곱하는 예약일수 차이 구하기
 							Calendar calStartDate = Calendar.getInstance();
 							calStartDate.setTime(utilStartDate);
 
@@ -430,8 +433,8 @@ public class ReservationAWT {
 							int diffDays = (int)diffSec / (24*60*60); //일자수 차이
 							
 							
-							// DB INSERT
-							rsMgr2.InsertDate(userId, Integer.parseInt(rsRoom), sqlStartDate, 
+							// 3. DB INSERT : diffDays*p_cost 곱하기
+							mgr.InsertDate(userId, Integer.parseInt(rsRoom), sqlStartDate, 
 									sqlEndDate, headcount, r_status, diffDays*p_cost);
 							
 							check = 1;
@@ -445,7 +448,7 @@ public class ReservationAWT {
 
 						}
 
-						if (check == 1) {
+						if (check == 1) { // 예약 성공했을 때만 결제창 띄우기
 							PaymentFrame cpf = new PaymentFrame(userId);
 							cpf.setVisible(true);
 							jf.dispose();
@@ -500,11 +503,11 @@ public class ReservationAWT {
 			public void actionPerformed(ActionEvent e) {
 				int sMove = 1;
 
-				// sCF객체의 startCal 메소드 호출
+				// sCF객체의 startCal 메소드 호출 : +1씩 더해서 12 초과하면 내년, 1 미만이면 작년 셋팅
 				sCF.startCal(sMove);
 
 				// 해당 달력에 맞는 년도와 월 가져와서 달력 상단 라벨에 셋팅
-				sLabel.setText(sCF.setCalText());
+				sLabel.setText("시작일자 선택 : " + sCF.setCalText());
 
 			}
 		});
@@ -519,7 +522,7 @@ public class ReservationAWT {
 				sCF.startCal(sMove);
 
 				// 해당 달력에 맞는 년도와 월 가져와서 달력 상단 라벨에 셋팅
-				sLabel.setText(sCF.setCalText());
+				sLabel.setText("시작일자 선택 : " + sCF.setCalText());
 			}
 		});
 
@@ -538,7 +541,7 @@ public class ReservationAWT {
 		sLabel.setFont(f1);
 
 		// setText : 초기화 -> 해당 달력의 년도와 월로 새로 셋팅
-		sLabel.setText(sCF.setCalText());
+		sLabel.setText("시작일자 선택 : " + sCF.setCalText());
 
 		// 종료일 달력 액션리스너 연결
 		eAfterBtn.addActionListener(new ActionListener() {
@@ -551,7 +554,7 @@ public class ReservationAWT {
 				eCF.startCal(eMove);
 
 				// 해당 달력에 맞는 년도와 월 가져와서 달력 상단 라벨에 셋팅
-				eLabel.setText(eCF.setCalText());
+				eLabel.setText("종료일자 선택 : " + eCF.setCalText());
 			}
 		});
 		eBeforeBtn.addActionListener(new ActionListener() {
@@ -564,7 +567,7 @@ public class ReservationAWT {
 				eCF.startCal(eMove);
 
 				// 해당 달력에 맞는 년도와 월 가져와서 달력 상단 라벨에 셋팅
-				eLabel.setText(eCF.setCalText());
+				eLabel.setText("종료일자 선택 : " + eCF.setCalText());
 
 			}
 		});
@@ -583,7 +586,7 @@ public class ReservationAWT {
 
 		eLabel.setFont(f1);
 		// setText : 초기화 -> 해당 달력의 년도와 월로 새로 셋팅
-		eLabel.setText(eCF.setCalText());
+		eLabel.setText("종료일자 선택 : " + eCF.setCalText());
 
 		// 시작일 달력 표시
 		panel12.setLayout(new GridLayout(7, 7, 0, 0));
@@ -613,11 +616,21 @@ public class ReservationAWT {
 						if (sDayBtn[i].getText().length() > 0) {
 							if (e.getSource() == sDayBtn[i]) {
 								if (sDayBtn[i].getText().length() == 1) { //한자리 일자
-									rsSDateTf.setText(sLabel.getText()
+									rsSDateTf.setText(sLabel.getText().substring(10)
 											+ String.format("%02d", Integer.parseInt(sDayBtn[i].getText())) + "일");
 								} else { // 두자리 일자
-									rsSDateTf.setText(sLabel.getText() + sDayBtn[i].getText() + "일");
+									rsSDateTf.setText(sLabel.getText().substring(10) + sDayBtn[i].getText() + "일");
 								} 
+								
+								if(rsSDateTf.getText().trim().length()>0 && rsEDateTf.getText().trim().length()>0) { // 시작일정 골라놨을 때 종료일자와 비교가능 
+									int rsSDateInt = Integer.parseInt(rsSDateTf.getText().trim().replaceAll("[^0-9]", "")); // 선택 시작일자
+									int rsEDateInt = Integer.parseInt(rsEDateTf.getText().trim().replaceAll("[^0-9]", "")); // 선택 종료일자
+									
+									if(rsEDateInt <= rsSDateInt) { // 종료일자가 시작일자보다 빠르다면(8자리 숫자로 봤을 때 작다면)
+										rsEDateTf.setText(""); // 종료일자 초기화
+										JOptionPane.showMessageDialog(null, "종료일자가 시작일자보다 같거나 빠를 수 없습니다.");
+									}
+								}
 							}
 						}
 					}
@@ -668,13 +681,13 @@ public class ReservationAWT {
 						if (eDayBtn[i].getText().length() > 0) {
 							if (e.getSource() == eDayBtn[i]) {
 								if (eDayBtn[i].getText().length() == 1) { // 한자리 일자
-									rsEDateTf.setText(eLabel.getText()
+									rsEDateTf.setText(eLabel.getText().substring(10)
 											+ String.format("%02d", Integer.parseInt(eDayBtn[i].getText())) + "일");
 								} else { // 두자리 일자
-									rsEDateTf.setText(eLabel.getText() + eDayBtn[i].getText() + "일");
+									rsEDateTf.setText(eLabel.getText().substring(10) + eDayBtn[i].getText() + "일");
 								}
 								
-								if(rsSDateTf.getText().trim().length()>0) { // 시작일정 골라놨을 때 종료일자와 비교가능 
+								if(rsSDateTf.getText().trim().length()>0 && rsEDateTf.getText().length()>0) { // 시작일정 골라놨을 때 종료일자와 비교가능 
 									int rsSDateInt = Integer.parseInt(rsSDateTf.getText().trim().replaceAll("[^0-9]", "")); // 선택 시작일자
 									int rsEDateInt = Integer.parseInt(rsEDateTf.getText().trim().replaceAll("[^0-9]", "")); // 선택 종료일자
 									
@@ -703,7 +716,7 @@ public class ReservationAWT {
 				eDayBtn[i].setForeground(Color.BLUE);
 		}
 
-		eCF.setBtn(eDayBtn); // 요일 셋팅
+		eCF.setBtn(eDayBtn); // 일자, 요일 셋팅
 		eCF.setCal(); // 달력 버튼의 날짜 셋팅
 
 		rsRoomTf.setText(roomBtn[0].getText());
@@ -713,7 +726,7 @@ public class ReservationAWT {
 	}
 
 	// 생성자
-	public ReservationAWT() {
+	public ReservationFrame() {
 		this(null);
 	}
 

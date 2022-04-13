@@ -1,0 +1,41 @@
+/*1. 회원 테이블*/
+CREATE TABLE user (
+	id VARCHAR(10) PRIMARY KEY, /*--사용자 아이디--*/
+	pwd CHAR(10) NOT NULL, /*--사용자 비밀번호--*/
+	name VARCHAR(10) NOT NULL, /*--사용자 이름(예약자이름)--*/
+	email CHAR(30) NOT NULL, /*--사용자 이메일 (추후 예약 및 결제내역 발송용)--*/
+	phone CHAR(50) NOT NULL, /*--사용자 핸드폰번호--*/ 
+	birthday DATE NOT NULL, /*--사용자 생년월일--*/
+	gender CHAR(2) NOT NULL, /*--사용자 성별--*/
+	mode INT NOT NULL /*관리자1, 사용자0*/
+);
+
+/*2. 룸 테이블*/
+CREATE TABLE room(
+	r_room INT PRIMARY KEY, /*룸번호 : 101, 102, 201, 202*/
+	cost INT NOT NULL, /*1박당 룸 가격 150,000 200,000 250,000 300,000*/
+	r_capacity INT NOT NULL /*수용인원*/
+);
+
+
+/*3. 예약 테이블 */
+CREATE TABLE reservation(
+	id VARCHAR(10), /*예약자  아이디 */
+	r_room INT, /*예약 룸번호 : 101, 102, 201, 202호*/
+	startdate DATE,  /*1박기준 시작일자*/
+	enddate DATE, /*1박기준 종료일자*/
+	headcount INT, /* 이용인원*/
+	r_status CHAR(10), /*예약상태 : 결제 전, 입금완료 */
+	p_cost INT, /*1박당 룸 가격 * 일수 = 결제 금액*/
+	res_no INT  AUTO_INCREMENT PRIMARY KEY /*예약번호, 자동증가*/
+);
+
+
+
+INSERT room VALUES (101,150000,2);
+INSERT room VALUES (102,200000,3);
+INSERT room VALUES (201,250000,4);
+INSERT room VALUES (202,300000,5);
+
+회원가입으로 관리자 생성하기 
+관리자 abc123
